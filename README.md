@@ -11,8 +11,8 @@
       <p><b>兰州大学数学与统计学院</b></p>
       <p><b>导师：陈明华</b></p>
     </td>
-    <td width="25%">
+<!--     <td width="25%">
       <img src="头像.jpg" width="100%">
-    </td>
+    </td> -->
   </tr>
 </table>
