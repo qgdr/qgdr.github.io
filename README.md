@@ -10,6 +10,6 @@
 
 导师：陈明华
 
-## 学习课程
+## 项目
 
-[课程列表](courses.html)
+[MTree](./MTree/index.html)
