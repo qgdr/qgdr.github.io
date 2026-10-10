@@ -8,6 +8,7 @@
 .ocean-isobaths path{fill:none;stroke:#719aa6;stroke-width:.65;vector-effect:non-scaling-stroke}
 .ocean-relationships{z-index:0}
 .ocean-relationships path{fill:none;stroke:#477987;stroke-width:1.1;opacity:.075;transition:opacity .25s ease,stroke-width .25s ease}
+.ocean-relationships path.ocean-relation-shared{stroke:#9a7b62;stroke-dasharray:5 6}
 .ocean-relationships-mobile{display:none}
 .depth-ocean.ocean-is-focused .ocean-relationships path{opacity:.025}
 .depth-ocean.ocean-is-focused .ocean-relationships path.ocean-link-active{opacity:.65;stroke-width:1.55}

@@ -11,6 +11,7 @@ const SUBJECTS = {
   'linear-algebra':['线性代数','Linear Algebra'],
   'mathematical-analysis':['数学分析','Mathematical Analysis'],
   'real-analysis':['实分析','Real Analysis'],
+  'signals-and-systems':['信号与系统','Signals and Systems'],
   'calculus':['微积分','Calculus'],
   'complex-analysis':['复分析','Complex Analysis'],
   'topology':['拓扑学','Topology'],
@@ -47,6 +48,9 @@ const titleOf = id => byId(id)?.title || id;
 const isExercise = node => node?.kind === 'exercise';
 const knowledgeNodes = () => state.graph.nodes.filter(node => !isExercise(node));
 const exerciseNodes = () => state.graph.nodes.filter(isExercise);
+const nodeSubjects = node => [...new Set([node?.subject,...(node?.subjects||[])].filter(Boolean))];
+const belongsToSubject = (node,subject) => nodeSubjects(node).includes(subject);
+const subjectForNode = (node,preferred=state.subject) => belongsToSubject(node,preferred)?preferred:node?.subject||preferred;
 const directlyRequired = node => [...new Set(node?.requires || state.graph.edges.filter(edge => edge.type === 'requires' && edge.target === node?.id).map(edge => edge.source))].filter(id => byId(id) && !isExercise(byId(id)));
 const progressClass = id => state.understood.has(id) ? 'understood' : state.read.has(id) ? 'read' : '';
 const progressLabel = id => state.understood.has(id) ? '已理解 / Understood' : state.read.has(id) ? '已读 / Read' : '未读 / Unread';
@@ -56,12 +60,12 @@ function subjectInfo(subject) {
   return {id:subject,title:names[0],english:names[1]};
 }
 function availableSubjects() {
-  return [...new Set(knowledgeNodes().map(node=>node.subject).filter(Boolean))]
+  return [...new Set(knowledgeNodes().flatMap(nodeSubjects))]
     .sort((a,b)=>a==='linear-algebra'?-1:b==='linear-algebra'?1:subjectInfo(a).title.localeCompare(subjectInfo(b).title,'zh-CN'))
-    .map(subject=>({...subjectInfo(subject),count:knowledgeNodes().filter(node=>node.subject===subject).length}));
+    .map(subject=>({...subjectInfo(subject),count:knowledgeNodes().filter(node=>belongsToSubject(node,subject)).length}));
 }
 function mapHash(subject=state.subject,routeId=state.currentRouteId) { return `#/map/${encodeURIComponent(subject || 'linear-algebra')}${routeId?`?route=${encodeURIComponent(routeId)}`:''}`; }
-function conceptHash(id){return `${mapHash(byId(id)?.subject||state.subject,null)}?focus=${encodeURIComponent(id)}`;}
+function conceptHash(id){return `${mapHash(subjectForNode(byId(id)),null)}?focus=${encodeURIComponent(id)}`;}
 function exploreConcept(id){if(isExercise(byId(id)))openLesson(id);else navigate(conceptHash(id));}
 function selectionKey(nodeId,routeId=state.currentRouteId){return `${routeId||'_reading'}/${nodeId}`;}
 function displayedArticles(lesson){
@@ -204,7 +208,7 @@ async function route() {
       if (version !== state.routeVersion) return;
       lesson.id ||= id;
       state.lesson = lesson; state.selected = id;
-      setSubject(lesson.subject || byId(id)?.subject || state.subject);
+      setSubject(subjectForNode(lesson));
       document.title = `${lesson.title} · MTree`;
       renderLesson(lesson);
       const anchor = url.searchParams.get('anchor');
@@ -378,7 +382,7 @@ function renderMap({expanding=false}={}) {
   const focus=snapshot?byId(snapshot.focusId):null;
   const subject=focus?{title:focus.title,english:focus.english_title}:state.learningRoute?{title:state.learningRoute.title,english:state.learningRoute.english_title||'Learning route'}:subjectInfo(state.subject);
   const activeGraph=state.currentRouteId?state.routeGraphs[state.currentRouteId]:state.graph;
-  const nodes=snapshot?snapshot.nodes:(activeGraph?.nodes||[]).filter(node=>!isExercise(node)&&(state.learningRoute||node.subject===state.subject));
+  const nodes=snapshot?snapshot.nodes:(activeGraph?.nodes||[]).filter(node=>!isExercise(node)&&(state.learningRoute||belongsToSubject(node,state.subject)));
   const ids=new Set(nodes.map(node=>node.id));
   const edges=snapshot?snapshot.edges:(activeGraph?.edges||[]).filter(edge=>ids.has(edge.source)&&ids.has(edge.target));
   const courseIds=new Set(nodes.filter(node=>!isPlaceholder(node)).map(node=>node.id));
@@ -724,6 +728,9 @@ function renderLesson(lesson) {
   app.innerHTML=`<article class="reader-page ${exercise?'exercise-reader':''} page-enter"><div class="reader-topline"><a class="reader-back" id="reader-back" href="${returnHash}">← ${previous ? `返回原讲义 · ${escapeHTML(titleOf(previous.id))}` : returnLabel}</a><div class="reader-tools"><button id="toggle-read" class="read-toggle"></button><button id="toggle-understood" class="understood-toggle"></button><a class="reader-workspace" href="#/workspace?node=${encodeURIComponent(lesson.id)}">写作空间</a></div></div><header class="reader-heading"><p class="eyebrow">${escapeHTML(subjectInfo(lesson.subject || state.subject).english.toUpperCase())} · ${exercise?'EXERCISE':'CONCEPT'}</p><h1>${escapeHTML(lesson.title)}</h1><p class="reader-english">${escapeHTML(english)}</p><p class="lesson-progress" id="lesson-progress"></p>${lesson.objective?`<p class="reader-objective"><span>LEARNING OBJECTIVE · 学习目标</span>${escapeHTML(lesson.objective)}</p>`:''}${exercise?requirementDiagram({...byId(lesson.id),...lesson}):prerequisites.length?`<div class="prerequisite-strip"><span>前置依赖 / Prerequisites</span>${prerequisites.filter(id=>!isExercise(byId(id))).map(id=>`<a href="/learn/${encodeURIComponent(id)}">${escapeHTML(titleOf(id))} <span>${escapeHTML(byId(id)?.english_title||'')}</span></a>`).join('')}</div>`:''}</header><div class="lesson-content" id="lesson-content">${empty?`<section class="empty-lesson"><div class="empty-disc">＋</div><h2>这一个节点，等待你的讲义。</h2><p>内容筹备中 / Content coming soon</p><p>它已经连接到知识图谱。先修与相关节点可以自由探索。</p><a class="primary-button" href="#/workspace?node=${encodeURIComponent(lesson.id)}">开始写作 / Write this lesson <span>↗</span></a></section>`:cleanLessonHTML(lesson.html)}</div><section class="resource-section" id="lesson-resources" hidden></section>${containing.length?`<details class="lesson-components"><summary>可复用的小节点 / Reusable concepts · ${containing.length}</summary><div>${containing.map(id=>`<a href="/learn/${encodeURIComponent(id)}">${escapeHTML(titleOf(id))}<small>${escapeHTML(byId(id)?.english_title||'')}</small></a>`).join('')}</div></details>`:''}${practices.length?`<section class="lesson-practice"><div><h2>练习这一概念 / Practice</h2><p>${practices.length} 份习题直接使用此知识节点。</p></div><a href="#/exercises?node=${encodeURIComponent(lesson.id)}">前往习题库 →</a></section>`:''}${renderBibliography(lesson.bibliography || [])}<footer class="reader-ending"><span class="end-symbol">${empty?'○':'✧'}</span><h2>${exercise?'把练习连回知识。':empty?'回到知识网络':'把这一段理解，连回知识网络。'}</h2><p>${empty?'沿着关联，寻找下一个概念。':`继续向下滚动，${exercise?'回到习题库':'回到图谱'}并标记为已读。已理解需要你主动勾选。`}</p><button class="primary-button" id="finish-reading">${empty?returnLabel:exercise?'完成阅读，返回习题库 / Finish & return':'完成阅读，返回图谱 / Finish & return'} <span>↑</span></button><div class="end-scroll-hint" id="bottom-hint">${empty?'':'到达底部后，再向下滚动一次'}</div></footer></article>`;
   document.getElementById('reader-back').onclick=event=>{event.preventDefault();returnFromReading(false);};
   if(STATIC_SITE)app.querySelectorAll('.reader-workspace,.empty-lesson .primary-button').forEach(element=>element.remove());
+  if(!exercise&&nodeSubjects(lesson).length>1){
+    app.querySelector('.reader-heading').insertAdjacentHTML('beforeend',`<nav class="lesson-subjects" aria-label="复用此概念的主题 Topics using this concept"><span>同一概念，多个主题 / Shared concept</span>${nodeSubjects(lesson).map(subject=>`<a href="${mapHash(subject,null)}" ${subject===state.subject?'aria-current="page"':''}>${escapeHTML(subjectInfo(subject).title)} <small>${escapeHTML(subjectInfo(subject).english)}</small>${subject===lesson.subject?'<em>主要归属 / Primary</em>':''}</a>`).join('')}</nav>`);
+  }
   document.getElementById('finish-reading').onclick=()=>returnFromReading(!empty,true);
   const readToggle=document.getElementById('toggle-read');
   const understoodToggle=document.getElementById('toggle-understood');

@@ -39,6 +39,7 @@
     pre { margin: 0; color: #3c5245; font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace; font-size: 13px; line-height: 1.9; }
     .keyword { color: #6d508b; }
     .type { color: #856935; }
+    .operator { color: #2d796c; font-weight: 650; }
     .comment { color: #87907e; }
     .graph-art { padding: 0; display: flex; justify-content: center; align-items: center; background: #e7f0ee; }
     .graph-art svg { width: 100%; height: 100%; }
@@ -76,18 +77,17 @@
       <section class="projects" aria-label="项目 / Projects">
         <article class="project">
           <div class="art code-art" aria-hidden="true">
-            <pre><span class="comment">// xelanguage</span>
-<span class="keyword">fn</span> add(a: <span class="type">i32</span>, b: <span class="type">i32</span>) -&gt; <span class="type">i32</span> {
-    a + b
-}
-
-<span class="keyword">let</span> answer = add(20, 22);</pre>
+            <pre><span class="keyword">fn</span> main() {
+    <span class="keyword">let</span> src <span class="operator">&lt;&lt;</span> String::from("Xe");
+    <span class="keyword">let</span> text: <span class="type">String</span> <span class="operator">&lt;&lt;</span> src;
+    println("{}", text<span class="operator">@</span>);
+}</pre>
           </div>
           <div class="project-body">
             <p class="project-kind">编程语言 / PROGRAMMING LANGUAGE</p>
             <h2>xelanguage</h2>
-            <p class="description">Xe 是一门静态类型编译语言，用明确的语法表达类型、指针、资源与控制流。检查源码后生成 C11，再由系统编译器构建。</p>
-            <p class="description en" lang="en">A statically typed compiled language with explicit types, pointers, and resource semantics. Xe compiles through C11.</p>
+            <p class="description">Xe 是一门静态类型编译语言，用 <code>&lt;&lt;</code> 显式移动资源，用后缀 <code>@</code> 取只读地址。检查源码后生成 C11，再由系统编译器构建。</p>
+            <p class="description en" lang="en">A statically typed language with explicit resource moves (<code>&lt;&lt;</code>) and address-taking (<code>@</code>), compiling through C11.</p>
             <div class="tags" aria-label="特点 / Features"><span class="tag">静态类型 / Static types</span><span class="tag">资源语义 / Resources</span><span class="tag">C11</span></div>
             <a class="project-link" href="https://github.com/qgdr/xelanguage"><span>查看项目 / View project</span><span aria-hidden="true">↗</span></a>
           </div>

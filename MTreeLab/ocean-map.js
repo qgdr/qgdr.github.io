@@ -61,7 +61,16 @@
     };
     edges.filter(edge=>edge.type==='prerequisite').forEach(edge=>add(edge.source,edge.target));
     valid.forEach(node=>(node.prerequisites || []).forEach(source=>add(source,node.id)));
-    return [...found.values()];
+    const links=[...found.values()].map(entry=>({...entry,type:'prerequisite'}));
+    const shared=new Map();
+    valid.forEach(node=>{
+      const memberships=[...new Set([node.subject,...(node.subjects||[])].filter(id=>subjects.has(id)))].sort();
+      memberships.forEach((source,index)=>memberships.slice(index+1).forEach(target=>{
+        const key=`${source}\0${target}`,entry=shared.get(key)||{source,target,count:0,type:'shared'};
+        entry.count++;shared.set(key,entry);
+      }));
+    });
+    return [...links,...shared.values()];
   }
   function connectionSVG(result, links, mobile) {
     const width=mobile?360:1000,height=mobile?result.mobileHeight:result.height;
@@ -71,7 +80,7 @@
       const ax=(mobile?a.mx:a.x)*width,ay=mobile?a.my:a.y,bx=(mobile?b.mx:b.x)*width,by=mobile?b.my:b.y;
       const bend=Math.max(90,Math.abs(by-ay)*.4);
       const direction=by>=ay?1:-1;
-      return `<path data-ocean-source="${esc(a.id)}" data-ocean-target="${esc(b.id)}" d="M${ax.toFixed(1)} ${ay.toFixed(1)} C${ax.toFixed(1)} ${(ay+direction*bend).toFixed(1)},${bx.toFixed(1)} ${(by-direction*bend).toFixed(1)},${bx.toFixed(1)} ${by.toFixed(1)}" vector-effect="non-scaling-stroke"/>`;
+      return `<path class="ocean-relation-${esc(link.type)}" data-ocean-source="${esc(a.id)}" data-ocean-target="${esc(b.id)}" d="M${ax.toFixed(1)} ${ay.toFixed(1)} C${ax.toFixed(1)} ${(ay+direction*bend).toFixed(1)},${bx.toFixed(1)} ${(by-direction*bend).toFixed(1)},${bx.toFixed(1)} ${by.toFixed(1)}" vector-effect="non-scaling-stroke"/>`;
     }).join('')}</svg>`;
   }
   function contours() {
