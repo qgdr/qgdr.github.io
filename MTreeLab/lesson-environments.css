@@ -1,0 +1,81 @@
+/* The labels and border geometry remain meaningful without colour perception. */
+.lesson-content .article-content{line-height:1.95;letter-spacing:.005em}
+.lesson-content .article-content>h1.math-article-title{display:none}
+.lesson-content .article-content>p{margin:18px 0 24px}
+.lesson-content .article-content>h2{margin-top:55px}
+.lesson-content .article-content>h3{margin-top:38px}
+.lesson-content .math-environment{
+  --env-ink:#176573;--env-line:#a6d3d8;--env-bg:#eff8f7;
+  position:relative;box-sizing:border-box;min-width:0;margin:30px 0 34px;
+  padding:21px 25px 19px;border:1px solid var(--env-line);
+  border-left:4px solid var(--env-ink);border-radius:0 16px 16px 0;
+  background:var(--env-bg);color:var(--ink,#233c35);overflow-wrap:anywhere;
+}
+.lesson-content .math-env-caption{
+  display:flex;align-items:baseline;gap:10px;margin:0 0 13px;
+  color:var(--env-ink);font-family:var(--sans,sans-serif);line-height:1.4;
+}
+.lesson-content .math-env-kind{font-size:13px;font-weight:650;letter-spacing:.08em}
+.lesson-content .math-env-english{font-size:10px;font-weight:550;letter-spacing:.11em;text-transform:uppercase}
+.lesson-content .math-environment>.math-env-title{
+  margin:0 0 15px;font-size:20px;line-height:1.65;color:var(--env-ink);font-weight:600;
+}
+.lesson-content .math-environment>.math-env-title--label{
+  font-family:var(--sans,sans-serif);font-size:13px;line-height:1.5;
+  letter-spacing:.04em;margin:0 0 14px;font-weight:600;
+}
+.lesson-content .math-env-added-label{font-size:11px;font-weight:500;letter-spacing:.035em}
+.lesson-content .math-environment>p{margin:13px 0 17px}
+.lesson-content .math-environment>p:last-child,
+.lesson-content .math-environment>:last-child{margin-bottom:0}
+.lesson-content .math-environment>.math-env-title+p{margin-top:11px}
+.lesson-content .math-environment .katex-display{margin:16px 0;padding:8px 1px}
+.lesson-content .math-environment a[data-node]{background:none;border-bottom-style:dotted}
+.lesson-content .math-environment--theorem{
+  --env-ink:#3b4983;--env-line:#c8cde4;--env-bg:#f1f3fb;
+  border-left:1px solid var(--env-line);border-top:4px solid var(--env-ink);
+  border-radius:15px;box-shadow:0 5px 18px #343e6e08;padding-top:19px;
+}
+.lesson-content .math-environment--lemma{
+  --env-ink:#4c7493;--env-line:#c8dbe6;--env-bg:#f3f8fb;
+  border-left-width:2px;border-radius:12px;
+}
+.lesson-content .math-environment--proposition,
+.lesson-content .math-environment--corollary{
+  --env-ink:#53618e;--env-line:#d1d5e4;--env-bg:#f6f6fb;
+  border-left-width:3px;border-radius:0 12px 12px 0;
+}
+.lesson-content .math-environment--proof{
+  --env-ink:#697171;--env-line:#d3d7d3;--env-bg:#f3f4f0;
+  padding:19px 24px;border:0;border-left:2px dashed #a7adaa;border-radius:0 10px 10px 0;
+}
+.lesson-content .math-environment--proof>.math-env-title{font-size:17px;font-family:var(--sans,sans-serif);font-weight:500}
+.lesson-content .math-environment--proof>.math-env-title--label{font-size:13px;font-weight:600}
+.lesson-content .math-environment--proof .math-env-caption{margin-bottom:11px}
+.lesson-content .math-environment--explanation{
+  --env-ink:#896843;--env-line:#e5d9c4;--env-bg:#faf4e9;
+  border-left-width:0;border-radius:15px;padding:22px 25px;
+}
+.lesson-content .math-environment--example{
+  --env-ink:#a56229;--env-line:#eccda9;--env-bg:#fff5e9;
+  border-left-width:4px;border-radius:0 14px 14px 0;
+}
+.lesson-content .math-environment--remark{
+  --env-ink:#737363;--env-line:#dddfcf;--env-bg:#f7f7ee;
+  border-left-width:2px;border-radius:0 10px 10px 0;padding:18px 23px;
+}
+.lesson-content blockquote.math-environment{color:var(--ink,#233c35);margin:30px 0 34px}
+@media(max-width:600px){
+  .lesson-content .math-environment{padding:18px 17px 17px;margin:26px 0 29px;border-radius:0 12px 12px 0}
+  .lesson-content .math-environment--theorem,
+  .lesson-content .math-environment--lemma,
+  .lesson-content .math-environment--explanation{border-radius:12px}
+  .lesson-content .math-environment>.math-env-title{font-size:18px;line-height:1.7}
+  .lesson-content .math-environment--proof>.math-env-title{font-size:16px}
+  .lesson-content .math-environment>.math-env-title--label{font-size:12px}
+  .lesson-content .math-env-kind{font-size:12px}.lesson-content .math-env-english{font-size:9px}
+}
+@media print{
+  .lesson-content .math-environment{box-shadow:none;break-inside:avoid;background:transparent}
+  .lesson-content .math-environment--proof{break-inside:auto}
+}

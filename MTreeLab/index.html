@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f7f2">
+  <meta name="description" content="MTree：用知识图谱探索数学，用讲义连接理解。Explore mathematics through connected ideas.">
+  <title>MTree · 数学，彼此相连</title>
+  <link rel="icon" href="/MTreeLab/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/MTreeLab/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="/MTreeLab/styles.css">
+  <link rel="stylesheet" href="/MTreeLab/lesson-environments.css">
+  <link rel="stylesheet" href="/MTreeLab/learning-map.css">
+  <link rel="stylesheet" href="/MTreeLab/ocean-map.css">
+  <link rel="stylesheet" href="/MTreeLab/external-links.css">
+  <link rel="stylesheet" href="/MTreeLab/concept-explorer.css">
+  <script defer src="/MTreeLab/vendor/katex/katex.min.js"></script>
+  <script defer src="/MTreeLab/vendor/katex/auto-render.min.js"></script>
+  <script defer src="/MTreeLab/lesson-environments.js"></script>
+  <script defer src="/MTreeLab/learning-map.js"></script>
+  <script defer src="/MTreeLab/ocean-map.js"></script>
+  <script defer src="/MTreeLab/external-links.js"></script>
+  <script defer src="/MTreeLab/graph-relations.js"></script>
+  <script defer src="/MTreeLab/concept-explorer.js"></script>
+  <script defer src="/MTreeLab/exploration-layout.js"></script>
+  <script defer src="/MTreeLab/site-config.js"></script>
+  <script defer src="/MTreeLab/data-source.js"></script>
+  <script defer src="/MTreeLab/app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a href="#/home" class="brand" aria-label="MTree 首页">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="m6 25 10-19 10 19M10 17h12"/><circle cx="16" cy="6" r="2.5"/><circle cx="6" cy="25" r="2.5"/><circle cx="26" cy="25" r="2.5"/></svg>
+      <span>MTree</span>
+    </a>
+    <nav class="header-actions" aria-label="主导航">
+      <a href="#/home" class="quiet-link" id="explore-link">知识图谱 <span>Explore</span></a>
+      <a href="#/routes" class="quiet-link">路线 <span>Routes</span></a>
+      <a href="#/exercises" class="quiet-link">习题库 <span>Exercises</span></a>
+      
+    </nav>
+  </header>
+  <main id="app" aria-live="polite"><div class="loading">正在连接数学节点…</div></main>
+  <div id="toast" role="status" class="toast" hidden></div>
+  <dialog id="writer" class="writer-dialog" aria-labelledby="writer-title">
+    <form id="writer-form">
+      <div class="writer-heading"><div><p class="eyebrow">CONTENT STUDIO</p><h2 id="writer-title">添加知识节点</h2></div><button type="button" class="icon-button" id="close-writer" aria-label="关闭编辑器">×</button></div>
+      <p class="writer-intro">讲义保存为项目中的 Markdown，节点关系保存为 TOML。保存时会检查引用与先修关系。</p>
+      <div class="form-grid">
+        <label>固定 ID <span>Stable ID</span><input name="id" required pattern="[a-z0-9][a-z0-9.\-]*" placeholder="la.your-topic"></label>
+        <label>发布状态 <span>Status</span><select name="status"><option value="draft">草稿 / Draft</option><option value="review">待审核 / Review</option><option value="published">已发布 / Published</option></select></label>
+        <label>中文名称 <span>Chinese title</span><input name="title" required placeholder="例如：正交投影"></label>
+        <label>英文名称 <span>English title</span><input name="english_title" required placeholder="e.g. Orthogonal projection"></label>
+        <label>所属学科 <span>Subject</span><select name="subject" required></select></label>
+      </div>
+      <label>学习目标 <span>Learning objective</span><input name="objective" placeholder="学完这个节点，能够理解或解释什么？"></label>
+      <div class="form-grid relation-fields"><label>先修节点 <span>Prerequisites · Ctrl / ⌘ 多选</span><select name="prerequisites" multiple size="4"></select></label><label>相关节点 <span>Related concepts · Ctrl / ⌘ 多选</span><select name="related" multiple size="4"></select></label></div>
+      <p id="writer-sync-note" class="field-hint" hidden>此节点以 Typst 为主稿，这里编辑网页伴稿。修改数学内容时，请同时更新 handout.typ 并重新编译。<br>Keep the Typst master and this web companion in sync.</p>
+      <label>讲义正文 <span>Markdown + LaTeX</span><textarea name="markdown" required spellcheck="false" rows="14" placeholder="## 定义 Definition&#10;&#10;数学公式：$A x = b$&#10;&#10;[矩阵 Matrix](node:la.matrix#definition)"></textarea></label>
+      <details class="authoring-help"><summary>引用与资源怎么写？ / Authoring help</summary><p>节点：<code>[矩阵 Matrix](node:la.matrix)</code>；段落：<code>&lt;a id="definition"&gt;&lt;/a&gt;</code>；文献：<code>[教材](cite:reference-id)</code>；附件：<code>[观看动画](asset:video-id)</code>。已有文献 ID 来自 <code>content/references.toml</code>。公式使用 <code>$…$</code> 或独立行的 <code>$$…$$</code>。</p></details>
+      <details class="attachment-fields"><summary>添加附件 / Add an attachment</summary><div class="form-grid"><label>附件 ID <span>Stable asset ID</span><input name="asset_id" pattern="[a-z0-9][a-z0-9.\-]*" placeholder="lecture-video"></label><label>附件类型 <span>Type</span><select name="asset_type"><option value="video">视频 / Video</option><option value="typst">Typst 源文件 / Source</option><option value="pdf">PDF 讲义 / Handout</option><option value="notebook">Jupyter Notebook</option></select></label></div><label>文件 <span>File</span><input type="file" name="asset_file" accept=".mp4,.webm,.pdf,.typ,.ipynb"></label><p class="field-hint">程序先保存讲义，再上传附件。视频自动出现在正文中；上传成功后可用附件 ID 引用。Typst 编译为 PDF 后可在讲义内查看。</p></details>
+      <p id="writer-status" class="writer-status" role="status"></p>
+      <div class="writer-footer"><button type="button" id="cancel-writer" class="text-button">取消 / Cancel</button><button type="submit" class="primary-button" id="save-content">保存节点 / Save node <span>↗</span></button></div>
+    </form>
+  </dialog>
+</body>
+</html>

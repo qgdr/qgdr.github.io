@@ -1,0 +1,71 @@
+WEBVTT
+
+1
+00:00:00.400 --> 00:00:12.000 line:2% position:50% align:center
+线性方程组 / Linear equations
+先假设共同分母非零。
+
+2
+00:00:12.100 --> 00:00:22.000 line:2% position:50% align:center
+线性组合 / Linear combination
+c = x a + y b
+
+3
+00:00:22.100 --> 00:00:30.000 line:2% position:50% align:center
+仿射组合 / Affine combination
+t a + (1 − t) b，0 ≤ t ≤ 1
+
+4
+00:00:30.100 --> 00:00:38.000 line:2% position:50% align:center
+面积比 / Area ratio
+同高三角形：面积比等于底边比
+
+5
+00:00:38.100 --> 00:00:50.000 line:2% position:50% align:center
+标准基 / Standard basis
+绿色面积比是 x；红色面积比是 y
+
+6
+00:00:50.100 --> 00:01:04.000 line:2% position:50% align:center
+线性变换 / Linear transformation
+非退化时，面积比保持不变
+
+7
+00:01:04.100 --> 00:01:14.000 line:2% position:50% align:center
+有向面积 / Signed area
+a₁b₂ − a₂b₁ = 2 S(OAB)
+
+8
+00:01:14.100 --> 00:01:22.000 line:2% position:50% align:center
+行列式 · 外积 / Determinant · Wedge product
+以标准有向单位面积计量
+
+9
+00:01:22.100 --> 00:01:30.000 line:2% position:50% align:center
+有向体积 / Oriented volume
+标准基张成的单位体积为 1
+
+10
+00:01:30.100 --> 00:01:38.000 line:2% position:50% align:center
+逐列线性 / Multilinearity
+列倍加不改变行列式 / Column addition
+
+11
+00:01:38.100 --> 00:01:50.000 line:2% position:50% align:center
+标准基展开 / Basis expansion
+此处 aᵢⱼ：第 i 个向量的第 j 个分量
+
+12
+00:01:50.100 --> 00:02:00.000 line:2% position:50% align:center
+交错性 / Alternating property
+交换两列，行列式变号
+
+13
+00:02:00.100 --> 00:02:08.000 line:2% position:50% align:center
+置换 · 逆序数 / Permutation · Inversion count
+偶数取正，奇数取负
+
+14
+00:02:08.100 --> 00:02:22.700 line:2% position:50% align:center
+克拉默法则 / Cramer's rule
+分母必须非零；保持外积顺序

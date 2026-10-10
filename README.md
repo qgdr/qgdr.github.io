@@ -1,15 +1,15 @@
-# qgdr的个人网页
+# Projects · 项目
 
-## 个人简介 
+## [xelanguage](https://github.com/qgdr/xelanguage)
 
-韩建星 男
+Xe 是一门静态类型编译语言，用明确的语法表达类型、指针、资源与控制流，检查源码后生成 C11。
 
-计算数学 硕士研究生
+A statically typed compiled language with explicit resource semantics and a C11 backend.
 
-兰州大学数学与统计学院
+## [MTreeLab](https://qgdr.github.io/MTreeLab/)
 
-导师：陈明华
+通过知识图谱连接数学概念、讲义、交互图与习题，沿必要的前置知识逐步建立理解。
 
-## 项目
+A mathematics learning space built around connected concepts, prerequisites, notes, interactive figures, and exercises.
 
-[MTree](./MTree/site/index.html)
+[访问主页 / Open project homepage](https://qgdr.github.io/) · [进入 MTreeLab / Open MTreeLab](https://qgdr.github.io/MTreeLab/)

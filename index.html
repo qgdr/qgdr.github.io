@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="xelanguage：静态类型编译语言。MTreeLab：以知识图谱连接概念、讲义与习题的数学学习空间。">
+  <meta name="color-scheme" content="light">
+  <title>Projects · xelanguage &amp; MTreeLab</title>
+  <style>
+    :root { --ink: #25322f; --muted: #67726a; --line: #dce2d8; --paper: #f7f8f2; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--paper); font-family: Inter, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    a:focus-visible { outline: 3px solid #447b6b; outline-offset: 6px; border-radius: 5px; }
+    .shell { width: min(1120px, calc(100% - 72px)); margin: 0 auto; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 34px 0; border-bottom: 1px solid var(--line); }
+    .wordmark { display: flex; align-items: center; gap: 11px; font-size: 14px; font-weight: 650; letter-spacing: .08em; }
+    .mark { width: 19px; height: 19px; border: 2px solid var(--ink); border-radius: 50%; position: relative; }
+    .mark::after { content: ""; width: 5px; height: 5px; background: var(--ink); border-radius: 50%; position: absolute; inset: 5px; }
+    .header-note { font-size: 12px; color: var(--muted); letter-spacing: .03em; }
+    .intro { padding: 72px 0 48px; }
+    .eyebrow { margin: 0 0 19px; color: #687c6f; font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(32px, 4.4vw, 52px); font-weight: 550; line-height: 1.35; letter-spacing: -.035em; }
+    .intro-en { margin: 18px 0 0; font-size: 16px; line-height: 1.65; color: var(--muted); }
+    .projects { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .project { position: relative; display: flex; flex-direction: column; overflow: hidden; background: #fffefa; border: 1px solid var(--line); border-radius: 25px; }
+    .project-body { padding: 30px 32px 29px; display: flex; flex-direction: column; flex: 1; }
+    .project-kind { margin: 0 0 13px; font-size: 11px; font-weight: 600; letter-spacing: .1em; color: #717a6e; }
+    h2 { margin: 0 0 18px; font-size: 30px; font-weight: 600; letter-spacing: -.035em; }
+    .description { margin: 0; font-size: 14px; line-height: 1.85; }
+    .description.en { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.75; }
+    .tags { display: flex; gap: 7px; flex-wrap: wrap; margin: 23px 0 28px; }
+    .tag { padding: 6px 10px; background: #f0f2ea; border-radius: 20px; font-size: 10px; color: #63705e; }
+    .project-link { display: inline-flex; gap: 14px; align-items: center; align-self: flex-start; margin-top: auto; font-size: 13px; font-weight: 600; padding: 11px 15px; border-radius: 11px; background: #2f493e; color: white; transition: background .15s ease; }
+    .project-link:hover { background: #466b58; }
+    .project-link span:last-child { font-size: 18px; line-height: 1; }
+    .art { height: 209px; padding: 29px 32px; overflow: hidden; border-bottom: 1px solid var(--line); }
+    .code-art { display: flex; align-items: center; background: #e9eee2; }
+    pre { margin: 0; color: #3c5245; font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace; font-size: 13px; line-height: 1.9; }
+    .keyword { color: #6d508b; }
+    .type { color: #856935; }
+    .comment { color: #87907e; }
+    .graph-art { padding: 0; display: flex; justify-content: center; align-items: center; background: #e7f0ee; }
+    .graph-art svg { width: 100%; height: 100%; }
+    .math-node { fill: #fcfefa; stroke: #99b8ac; stroke-width: 1.25; }
+    .math-node.focus { fill: #d0e5da; stroke: #5f8d79; }
+    .graph-art text { font-family: Inter, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #4b665b; font-size: 11px; text-anchor: middle; }
+    footer { margin: 50px 0 0; padding: 24px 0 33px; border-top: 1px solid var(--line); color: #899085; font-size: 11px; letter-spacing: .04em; }
+    @media (max-width: 700px) {
+      .shell { width: calc(100% - 36px); }
+      header { padding: 24px 0; }
+      .header-note { font-size: 10px; }
+      .intro { padding: 45px 0 32px; }
+      h1 { font-size: 32px; }
+      .intro-en { font-size: 13px; }
+      .projects { grid-template-columns: 1fr; gap: 20px; }
+      .art { height: 190px; }
+      .project-body { padding: 27px 27px 28px; }
+      footer { margin-top: 35px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .project-link { transition: none; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="wordmark"><span class="mark" aria-hidden="true"></span>PROJECTS</div>
+      <span class="header-note">语言与数学 / Language &amp; Mathematics</span>
+    </header>
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">Two projects, two ways to explore</p>
+        <h1 id="page-title">写出清晰的程序。<br>建立连贯的理解。</h1>
+        <p class="intro-en" lang="en">Clearer programs. Connected understanding.</p>
+      </section>
+      <section class="projects" aria-label="项目 / Projects">
+        <article class="project">
+          <div class="art code-art" aria-hidden="true">
+            <pre><span class="comment">// xelanguage</span>
+<span class="keyword">fn</span> add(a: <span class="type">i32</span>, b: <span class="type">i32</span>) -&gt; <span class="type">i32</span> {
+    a + b
+}
+
+<span class="keyword">let</span> answer = add(20, 22);</pre>
+          </div>
+          <div class="project-body">
+            <p class="project-kind">编程语言 / PROGRAMMING LANGUAGE</p>
+            <h2>xelanguage</h2>
+            <p class="description">Xe 是一门静态类型编译语言，用明确的语法表达类型、指针、资源与控制流。检查源码后生成 C11，再由系统编译器构建。</p>
+            <p class="description en" lang="en">A statically typed compiled language with explicit types, pointers, and resource semantics. Xe compiles through C11.</p>
+            <div class="tags" aria-label="特点 / Features"><span class="tag">静态类型 / Static types</span><span class="tag">资源语义 / Resources</span><span class="tag">C11</span></div>
+            <a class="project-link" href="https://github.com/qgdr/xelanguage"><span>查看项目 / View project</span><span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="project">
+          <div class="art graph-art" aria-hidden="true">
+            <svg viewBox="0 0 520 209" xmlns="http://www.w3.org/2000/svg">
+              <defs><marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#89a69a" stroke-width="1.2"/></marker></defs>
+              <g fill="none" stroke="#a0b9ae" stroke-width="1.35" marker-end="url(#arrow)"><path d="M135 69 C160 91 190 95 220 109"/><path d="M367 58 C331 75 310 90 284 108"/><path d="M269 136 C283 151 304 161 330 171"/></g>
+              <g><rect class="math-node" x="72" y="39" width="114" height="37" rx="18.5"/><text x="129" y="62">积分 / Integral</text></g>
+              <g><rect class="math-node" x="326" y="27" width="140" height="37" rx="18.5"/><text x="396" y="50">指数函数 / Exponential</text></g>
+              <g><rect class="math-node focus" x="199" y="98" width="122" height="41" rx="20.5"/><text x="260" y="115">Gamma 函数</text><text x="260" y="129" style="font-size:9px">Gamma Function</text></g>
+              <g><rect class="math-node" x="323" y="158" width="116" height="35" rx="17.5"/><text x="381" y="172">Beta 函数</text><text x="381" y="185" style="font-size:9px">Beta Function</text></g>
+              <g fill="#c3d4cb"><circle cx="39" cy="142" r="3"/><circle cx="456" cy="123" r="3"/><circle cx="148" cy="174" r="2"/></g>
+            </svg>
+          </div>
+          <div class="project-body">
+            <p class="project-kind">数学学习 / MATHEMATICS LEARNING</p>
+            <h2>MTreeLab</h2>
+            <p class="description">从概念依赖出发，串联数学讲义、交互图与独立习题库。沿所需前置逐步学习，在知识图谱与阅读之间自然往返。</p>
+            <p class="description en" lang="en">A graph-based mathematics learning space connecting prerequisites, notes, interactive figures, and exercises.</p>
+            <div class="tags" aria-label="特点 / Features"><span class="tag">知识图谱 / Knowledge graph</span><span class="tag">讲义 / Notes</span><span class="tag">习题 / Exercises</span></div>
+            <a class="project-link" href="https://qgdr.github.io/MTreeLab/"><span>进入网站 / Open website</span><span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+      </section>
+    </main>
+    <footer>xelanguage &nbsp;·&nbsp; MTreeLab</footer>
+  </div>
+</body>
+</html>
