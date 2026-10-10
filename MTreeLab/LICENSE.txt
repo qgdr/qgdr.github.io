@@ -1,0 +1,65 @@
+MTreeLab 暂行非商业许可 / Interim Non-Commercial License
+Version 1.0 · Effective 2026-10-10
+SPDX-License-Identifier: LicenseRef-qgdr-NonCommercial-1.0
+Copyright (c) 2026 qgdr
+
+中文条款（中英文不一致时以中文为准）
+
+1. 范围：本许可仅适用于本版本中 qgdr 拥有著作权、且未另行标明许可的
+MTreeLab 原创代码、讲义、图谱编排、网页设计、媒体及随项目维护的个人主页
+设计。仅授予 qgdr 有权授予的权利；不对第三方作品主张著作权。
+
+2. 许可：允许为非商业的个人学习、教学、研究目的阅读、运行、复制、修改
+和分享。分享原版或修改版须保留 qgdr 署名、本许可及原有版权声明，注明修改，
+并向接收者提供本许可。不得将修改版表述为 qgdr 的原作或背书。
+
+3. 暂时禁止商用：未经 qgdr 事先书面授权，不得将上述作品或修改版用于
+商业用途，包括出售、付费课程或资料、收费服务、商业产品集成、广告变现
+及其他以商业利益或报酬为目的的使用。免费提供不自动构成非商业用途。
+本许可不授予商业使用权。“暂行”没有自动到期日，后续调整以 qgdr 对
+相应版本明确发布的许可为准。授权联系：https://github.com/qgdr
+
+4. 例外与既有权利：第三方库、字体、教材、论文、引用、外部视频及另行
+许可的文件遵循各自原有许可和权利声明。本许可不改变这些许可，也不撤回
+此前已合法授予的权利。引用、链接或迁入不代表 qgdr 有权再次授权。
+详见 THIRD_PARTY_NOTICES.txt 及讲义参考文献。数学事实、思想、方法本身，
+以及依法无需许可即可进行的使用不受本许可限制。独立的 xelanguage、旧
+MTree 仓库不因本许可改变授权。
+
+5. 保留权利与免责：未明确授予的权利由相应权利人保留。作品按现状提供；
+在法律允许的范围内，不提供明示或默示保证，也不对使用造成的损失承担责任。
+
+English terms
+
+1. Scope. This license covers this release's original MTreeLab code, notes,
+graph arrangement, design, media and accompanying homepage design, only
+where qgdr owns the copyright and no other license is stated. It grants
+only rights that qgdr is entitled to grant.
+
+2. Permission. You may read, run, copy, modify and share the covered works
+for non-commercial personal learning, teaching and research. When sharing,
+retain attribution to qgdr, this license and existing copyright notices;
+identify modifications and provide recipients with this license. Do not
+misrepresent modified works as qgdr's originals or endorsement.
+
+3. No commercial use. Prior written permission from qgdr is required for
+commercial use of the works or modifications, including sales, paid courses
+or materials, paid services, commercial product integration, advertising
+monetization and other use for commercial benefit or payment. Free access
+does not by itself make a use non-commercial. No commercial rights are
+granted. The interim restriction has no automatic expiry; later changes
+require an explicit license for the applicable release.
+Contact: https://github.com/qgdr
+
+4. Exceptions and existing rights. Third-party libraries, fonts, textbooks,
+papers, quotations, external videos and separately licensed files retain
+their own terms and rights. This license does not override those terms or
+revoke rights previously granted. Inclusion or linking is not relicensing.
+See THIRD_PARTY_NOTICES.txt and each note's references. No exclusive rights
+are claimed over mathematical facts, ideas or methods. Statutory exceptions
+and uses not requiring permission remain unaffected. The independent
+xelanguage and legacy MTree repositories are unaffected.
+
+5. Reservation and disclaimer. All rights not expressly granted remain
+with their respective owners. The works are provided as is, without any
+express or implied warranty or liability, to the extent permitted by law.

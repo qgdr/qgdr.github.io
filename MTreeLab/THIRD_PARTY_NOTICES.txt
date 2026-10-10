@@ -1,0 +1,41 @@
+MTreeLab · 第三方与来源署名 / Third-party and source notices
+
+非商业许可仅涉及 qgdr 有权授权的原创部分，不覆盖下列第三方作品。
+Third-party works retain their own licenses; the project license does not
+replace or restrict them.
+
+KaTeX JavaScript / CSS
+  Copyright (c) 2013-2020 Khan Academy and other contributors. MIT License.
+  Full license: web/vendor/katex/LICENSE (website: vendor/katex/LICENSE).
+  https://github.com/KaTeX/KaTeX
+
+KaTeX fonts
+  Copyright 2009-2010 Design Science, Inc.; 2014-2018 Khan Academy.
+  SIL Open Font License 1.1; original font metadata and reserved names retained.
+  Full license: web/vendor/katex/fonts/OFL.txt
+  (website: vendor/katex/fonts/OFL.txt).
+
+Plotly.js v2.12.1
+  Copyright 2012-2022 Plotly, Inc. MIT License.
+  Interactive HTML retains bundled license/copyright comments, including
+  those of the third-party modules bundled by Plotly.
+  https://github.com/plotly/plotly.js/blob/v2.12.1/LICENSE
+
+其他依赖 / Other dependencies
+  Python、Manim、Typst、Markdown 解析器等工具遵循各自原许可。
+  公开网站不打包本地 Python 环境。本声明不改变这些工具的许可。
+  Development and runtime dependencies retain their respective licenses.
+
+讲义与媒体 / Notes and media
+  教材、论文、课程资料和外部视频属于各自权利人，出处保存在
+  content/references.toml，并在各讲义参考文献或外部链接处呈现。
+  引用、迁入或链接不代表取得再许可权。使用第三方材料须核对原作者、
+  出版方和平台的许可，不能仅依赖本项目许可。
+  Textbooks, papers, course materials and external videos belong to their
+  respective rights holders. Consult each note's references and the
+  original rights holder's terms; inclusion or linking is not relicensing.
+
+独立项目与历史许可 / Separate projects and previous licenses
+  xelanguage 和旧 MTree 仓库保持原许可。上层旧工作区 GPL 文件保留；
+  本声明不撤回此前依法授予的权利。
+  Independent repositories and previously granted rights are unchanged.
