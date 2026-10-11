@@ -774,6 +774,7 @@ function renderLesson(lesson) {
 function videoFigure(lesson,resource) {
   const figure=document.createElement('figure'); figure.className='lesson-media';
   const video=document.createElement('video'); video.controls=true;video.preload='metadata';video.playsInline=true;video.src=assetURL(lesson,resource);
+  if(resource.poster_url)video.poster=resource.poster_url;
   if(resource.caption_url){
     const track=document.createElement('track');track.kind='captions';track.srclang='zh';
       track.label=resource.captions_label||'中文讲解 / Chinese narration';track.src=resource.caption_url;
