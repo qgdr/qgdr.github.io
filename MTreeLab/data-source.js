@@ -10,8 +10,11 @@
   function sitePath(path){
     return base.pathname!=='/'&&path.startsWith(base.pathname)?'/'+path.slice(base.pathname.length):path;
   }
-  async function json(path){
-    if(!cache.has(path))cache.set(path,fetch(new URL((config.data_path||'data/')+path,base)).then(async response=>{
+  async function json(path,{refresh=false}={}){
+    if(refresh)cache.delete(path);
+    const url=new URL((config.data_path||'data/')+path,base);
+    if(refresh)url.searchParams.set('_refresh',Date.now());
+    if(!cache.has(path))cache.set(path,fetch(url,{cache:'no-cache'}).then(async response=>{
       if(!response.ok)throw new Error('内容暂不可用 / Content unavailable: '+path);
       return response.json();
     }).catch(error=>{cache.delete(path);throw error;}));
@@ -27,16 +30,22 @@
     return data.route||data;
   }
   async function selectLesson(id,params){
-    const lesson=await json('lessons/'+identifier(id)+'.json');
+    const path='lessons/'+identifier(id)+'.json';
+    let lesson=await json(path);
     const learningRoute=await route(params.get('route'));
     const step=learningRoute?.steps?.find(item=>item.node_id===id);
     if(params.getAll('articles').length>1)throw new Error('请只传入一组文章 / Pass one article selection');
-    const selected=params.has('articles')?params.get('articles').split(','):step?.article_ids||lesson.default_articles;
-    const lookup=new Map((lesson.all_articles||lesson.articles||[]).map(article=>[article.id,article]));
-    if(!Array.isArray(selected)||!selected.length||new Set(selected).size!==selected.length||selected.some(key=>!lookup.has(key)))
-      throw new Error('请选择本节点的一篇或多篇文章 / Select articles owned by this node');
-    const {all_articles,...result}=lesson;
-    return {...result,articles:selected.map(key=>lookup.get(key)),selected_article_ids:selected,route:learningRoute,in_route:learningRoute?!!step:null};
+    for(let attempt=0;attempt<2;attempt++){
+      const selected=params.has('articles')?params.get('articles').split(','):step?.article_ids||lesson.default_articles;
+      const lookup=new Map((lesson.all_articles||lesson.articles||[]).map(article=>[article.id,article]));
+      if(Array.isArray(selected)&&selected.length&&new Set(selected).size===selected.length&&selected.every(key=>lookup.has(key))){
+        const {all_articles,...result}=lesson;
+        return {...result,articles:selected.map(key=>lookup.get(key)),selected_article_ids:selected,route:learningRoute,in_route:learningRoute?!!step:null};
+      }
+      // A newly published article may be opened while an older lesson remains cached.
+      if(!attempt)lesson=await json(path,{refresh:true});
+    }
+    throw new Error('请选择本节点的一篇或多篇文章 / Select articles owned by this node');
   }
   async function request(url,options={}){
     if((options.method||'GET').toUpperCase()!=='GET')throw new Error('请在本地写作空间维护内容 / Edit content in the local writing workspace');
