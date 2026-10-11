@@ -1,4 +1,4 @@
-/* A continuous, editorial depth map. Geometry never invents prerequisites. */
+/* A continuous depth map. Geometry never invents prerequisites. */
 (function (global) {
   'use strict';
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -83,14 +83,11 @@
       return `<path class="ocean-relation-${esc(link.type)}" data-ocean-source="${esc(a.id)}" data-ocean-target="${esc(b.id)}" d="M${ax.toFixed(1)} ${ay.toFixed(1)} C${ax.toFixed(1)} ${(ay+direction*bend).toFixed(1)},${bx.toFixed(1)} ${(by-direction*bend).toFixed(1)},${bx.toFixed(1)} ${by.toFixed(1)}" vector-effect="non-scaling-stroke"/>`;
     }).join('')}</svg>`;
   }
-  function contours() {
-    return `<svg class="ocean-isobaths" viewBox="0 0 1000 1700" preserveAspectRatio="none" aria-hidden="true"><g><path d="M-180 290 C180 40 260 380 560 190 S980 110 1190 390"/><path d="M-180 310 C180 60 260 400 560 210 S980 130 1190 410"/><path d="M-180 338 C180 88 260 428 560 238 S980 158 1190 438"/><path d="M-160 680 C170 900 390 470 660 660 S980 820 1160 660"/><path d="M-160 705 C170 925 390 495 660 685 S980 845 1160 685"/><path d="M-160 738 C170 958 390 528 660 718 S980 878 1160 718"/><path d="M-120 1120 C110 920 420 1340 690 1100 S1030 1070 1160 1230"/><path d="M-120 1150 C110 950 420 1370 690 1130 S1030 1100 1160 1260"/><path d="M-120 1188 C110 988 420 1408 690 1168 S1030 1138 1160 1298"/><path d="M-120 1520 C240 1660 380 1400 660 1510 S940 1600 1170 1430"/></g></svg>`;
-  }
   function render(subjects, options = {}) {
     const result=layout(subjects,options);
     const links=connections(options.nodes,options.edges,result.items);
     const connected = id => [...new Set(links.filter(link=>link.source===id||link.target===id).map(link=>link.source===id?link.target:link.source))];
-    return `<div class="depth-ocean" role="group" aria-label="数学深海图 Mathematical depth map" style="--ocean-height:${result.height.toFixed(1)}px;--ocean-mobile-height:${result.mobileHeight.toFixed(1)}px">${contours()}${connectionSVG(result,links,false)}${connectionSVG(result,links,true)}<p class="ocean-surface-label">从熟悉的概念，向更深处 <span>Explore at your own depth</span></p>${result.items.map(item=>{
+    return `<div class="depth-ocean" role="group" aria-label="数学深海图 Mathematical depth map" style="--ocean-height:${result.height.toFixed(1)}px;--ocean-mobile-height:${result.mobileHeight.toFixed(1)}px">${connectionSVG(result,links,false)}${connectionSVG(result,links,true)}<p class="ocean-surface-label">从熟悉的概念，向更深处 <span>Explore at your own depth</span></p>${result.items.map(item=>{
       const English=item.english||item.english_title||'';
       const relationIds=connected(item.id);
       const relatedTitles=result.items.filter(other=>relationIds.includes(other.id)).map(other=>other.title);

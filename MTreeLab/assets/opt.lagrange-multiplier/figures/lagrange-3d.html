@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>沿单位圆寻找极值 / Constrained Extrema in 3D</title>
+<style>
+:root{font-family:system-ui,"Microsoft YaHei",sans-serif;color:#243b3c;background:#f8faf6;font-synthesis:none}*{box-sizing:border-box}body{margin:0}main{height:100svh;min-height:460px;max-height:900px;display:flex;flex-direction:column;padding:14px 18px 12px;gap:9px}header{display:flex;align-items:start;justify-content:space-between;gap:12px}h1{font-size:17px;font-weight:650;margin:0 0 4px}p{font-size:12px;line-height:1.5;margin:0;color:#627676}.formula{color:#3d6461;font-variant-numeric:tabular-nums}.tools{display:flex;align-items:center;flex-wrap:wrap;gap:7px}button{border:1px solid #cfdbd2;background:#fff;color:#36534c;border-radius:18px;padding:6px 12px;cursor:pointer;font:inherit;font-size:12px}button:hover,button:focus-visible{border-color:#4d8c79;background:#ecf4ed}button[data-kind=max]{color:#b14c33}button[data-kind=min]{color:#366a9c}label{font-size:12px;display:flex;align-items:center;gap:5px}.stage{position:relative;flex:1;min-height:220px;overflow:hidden;border:1px solid #e0e9df;border-radius:15px;background:linear-gradient(#f7faf5,#eef4ed)}canvas{display:block;touch-action:none;cursor:grab;width:100%;height:100%}canvas:active{cursor:grabbing}.hint{position:absolute;left:12px;bottom:9px;pointer-events:none;font-size:11px;color:#6b807b;background:#ffffffa8;padding:3px 7px;border-radius:10px}.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:11px;color:#57706a}.legend span:before{content:"";display:inline-block;width:14px;height:3px;margin-right:5px;vertical-align:middle;background:var(--color);border-radius:3px}.slider{display:grid;grid-template-columns:74px 1fr 48px;gap:10px;align-items:center;font-size:12px}input[type=range]{width:100%;accent-color:#c48a2f;margin:0}output{text-align:right;font-variant-numeric:tabular-nums}.status{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:5px;font-size:12px;line-height:1.5;color:#647a72}.status strong{font-size:16px;color:#3d5f52;font-variant-numeric:tabular-nums}#relation{max-width:480px}noscript{display:block;padding:16px}noscript img{max-width:100%}@media(max-width:540px){main{padding:12px;gap:7px}h1{font-size:15px}header p{font-size:11px}.formula{display:none}.legend{gap:9px}.status strong{font-size:14px}}
+</style>
+</head>
+<body>
+<main>
+  <header><div><h1>沿着约束，找最高与最低</h1><p>橙色曲线是能走的路；极值处，紫色切线在切平面内，并且水平。</p></div><p class="formula">f = 10x₁² + 4x₁x₂ + 4x₂²<br>x₁² + x₂² = 1</p></header>
+  <div class="tools"><button type="button" id="maximum" data-kind="max">最高处</button><button type="button" id="minimum" data-kind="min">最低处</button><button type="button" id="reset">重置视角</button><label><input type="checkbox" id="tangency" checked>切线与切平面 / Tangency</label><label><input type="checkbox" id="gradients" checked>底面梯度 / Gradients</label></div>
+  <div class="stage"><canvas id="scene" aria-label="可旋转的三维曲面和约束曲线；当前位置显示紫色切线、半透明切平面、玫红色曲面上升箭头及底面梯度。拖动旋转，滑块沿约束移动。" role="img"></canvas><span class="hint">拖动旋转 · 滑块沿圆移动</span></div>
+  <div class="legend"><span style="--color:#78a58d">曲面 z = f(x)</span><span style="--color:#c18035">圆上的高度</span><span id="tangent-legend" style="--color:#8463a3">切线与切平面</span><span id="ascent-legend" style="--color:#bf577b">曲面上升方向</span><span id="gradient-legend" style="--color:#d58b38">底面 ∇f 橙 / ∇h 青</span></div>
+  <label class="slider" for="angle">沿圆移动 θ<input id="angle" type="range" min="0" max="360" step="0.1" value="48"><output id="angle-value">48°</output></label>
+  <div class="status" aria-live="polite"><div>当前位置高度 <strong id="height-value"></strong><span id="coordinates"></span></div><span id="relation">沿圆继续移动，高度还会改变。</span></div>
+</main>
+<noscript><style>main{display:none}</style><p>此三维图需要 JavaScript。静态图同样展示极值处的切线、切平面和上升方向。</p><img src="/MTreeLab/assets/opt.lagrange-multiplier/figures/lagrange-3d.png" alt="绿色二次曲面，橙色约束曲线；最高处的紫色切线在半透明切平面内，玫红色上升箭头与切线垂直。"></noscript>
+<script>
+"use strict";
+(() => {
+const canvas=document.getElementById("scene"),ctx=canvas.getContext("2d"),stage=canvas.parentElement;
+const slider=document.getElementById("angle"),showGradients=document.getElementById("gradients"),showTangency=document.getElementById("tangency");
+const maxAngle=.5*Math.atan2(4,6),minAngle=maxAngle+Math.PI/2,pi2=2*Math.PI;
+const f=(x,y)=>10*x*x+4*x*y+4*y*y;
+const initial={yaw:-.83,elevation:.95};let yaw=initial.yaw,elevation=initial.elevation,theta=maxAngle,W=0,H=0,scale=1,originX=0,originY=0,drag=null;
+const zscale=.095,surfaceExtent=1.13,surfaceSteps=25;
+const add=(p,v,a=1)=>p.map((x,i)=>x+a*v[i]),dot3=(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0);
+const mesh=[];
+for(let i=0;i<surfaceSteps;i++)for(let j=0;j<surfaceSteps;j++){
+ const x=-surfaceExtent+2*surfaceExtent*i/surfaceSteps,y=-surfaceExtent+2*surfaceExtent*j/surfaceSteps,d=2*surfaceExtent/surfaceSteps;
+ const corners=[[x,y,f(x,y)],[x+d,y,f(x+d,y)],[x+d,y+d,f(x+d,y+d)],[x,y+d,f(x,y+d)]];
+ mesh.push({corners,height:corners.reduce((s,p)=>s+p[2],0)/4});
+}
+function geometry(){
+ const x=Math.cos(theta),y=Math.sin(theta),height=f(x,y),g=[20*x+4*y,4*x+8*y],t=[-y,x],d=g[0]*t[0]+g[1]*t[1],P=[x,y,height];
+ const T=[t[0],t[1],d],displayT=[t[0],t[1],zscale*d],tangentLength=Math.hypot(...displayT);
+ // The displayed surface is Z=k*f. Its steepest ascent inside its tangent plane
+ // is (k*g, k^2*||g||^2). Convert only its vertical component back to raw height.
+ const g2=g[0]*g[0]+g[1]*g[1],rawAscent=[zscale*g[0],zscale*g[1],zscale*g2],displayAscent=[rawAscent[0],rawAscent[1],zscale*rawAscent[2]],ascentLength=Math.hypot(...displayAscent);
+ const ascent=rawAscent.map(v=>.53*v/ascentLength),unitT=T.map(v=>v/tangentLength),unitAscent=rawAscent.map(v=>v/ascentLength);
+ const radial=[x,y,g[0]*x+g[1]*y];
+ const planePoint=(a,b)=>add(add(P,T,a),radial,b);
+ const plane=[planePoint(-.77,-.48),planePoint(.77,-.48),planePoint(.77,.48),planePoint(-.77,.48)];
+ return {x,y,height,gradient:g,constraintGradient:[2*x,2*y],baseTangent:t,derivative:d,point:P,surfaceTangent:T,displayTangent:displayT,rawAscent,displayAscent,ascent,unitT,unitAscent,plane,planePoint,
+  stationary:Math.abs(d)<1e-8,tangentInPlaneResidual:T[2]-g[0]*T[0]-g[1]*T[1],ascentInPlaneResidual:rawAscent[2]-g[0]*rawAscent[0]-g[1]*rawAscent[1],
+  gradientTangentDot:d,displayAscentTangentDot:dot3(displayT,displayAscent),planeResiduals:plane.map(q=>q[2]-height-g[0]*(q[0]-x)-g[1]*(q[1]-y))};
+}
+function rawProject(p){const x=p[0],y=p[1],z=p[2]*zscale,rx=Math.cos(yaw)*x-Math.sin(yaw)*y,ry=Math.sin(yaw)*x+Math.cos(yaw)*y;return [rx,ry*Math.sin(elevation)-z*Math.cos(elevation),ry*Math.cos(elevation)+z*Math.sin(elevation)];}
+function project(p){const q=rawProject(p);return [originX+scale*q[0],originY+scale*q[1],q[2]];}
+function fitView(){
+ const points=mesh.flatMap(cell=>cell.corners).concat([[-1.4,0,0],[1.4,0,0],[0,-1.4,0],[0,1.4,0],[0,0,23]]),q=geometry();
+ if(showGradients.checked){const n=Math.hypot(...q.gradient);points.push([q.x+.64*q.x,q.y+.64*q.y,.13],[q.x+.64*q.gradient[0]/n,q.y+.64*q.gradient[1]/n,.13]);}
+ if(showTangency.checked)points.push(...q.plane,add(q.point,q.unitT,.70),add(q.point,q.unitT,-.70),add(q.point,q.ascent));
+ let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+ for(const point of points){const p=rawProject(point);minX=Math.min(minX,p[0]);maxX=Math.max(maxX,p[0]);minY=Math.min(minY,p[1]);maxY=Math.max(maxY,p[1]);}
+ scale=Math.min((W-90)/(maxX-minX),(H-68)/(maxY-minY));originX=W*.5-scale*(minX+maxX)/2;originY=H*.5-scale*(minY+maxY)/2;
+}
+function poly(points,stroke,width=1,fill=null,dash=[]){ctx.beginPath();points.forEach((p,i)=>{const q=project(p);i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);});if(fill){ctx.closePath();ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.setLineDash(dash);ctx.stroke();ctx.setLineDash([]);}}
+function label(text,p,color="#50675e",offset=[0,0],align="center"){const q=project(p);ctx.font="12px system-ui, 'Microsoft YaHei', sans-serif";ctx.textAlign=align;ctx.textBaseline="middle";const w=ctx.measureText(text).width,x=q[0]+offset[0],y=q[1]+offset[1];ctx.fillStyle="#f8faf5e8";ctx.beginPath();const left=align==="left"?x-4:align==="right"?x-w-4:x-w/2-4;ctx.roundRect(left,y-9,w+8,18,5);ctx.fill();ctx.fillStyle=color;ctx.fillText(text,x,y);}
+function dot(p,color,r=4){const q=project(p);ctx.beginPath();ctx.arc(q[0],q[1],r,0,pi2);ctx.fillStyle=color;ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle="#fff";ctx.stroke();}
+function arrow(p,v,color,width){const a=project(p),b=project(add(p,v)),angle=Math.atan2(b[1]-a[1],b[0]-a[0]);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();ctx.beginPath();ctx.moveTo(b[0],b[1]);ctx.lineTo(b[0]-8*Math.cos(angle-.43),b[1]-8*Math.sin(angle-.43));ctx.lineTo(b[0]-8*Math.cos(angle+.43),b[1]-8*Math.sin(angle+.43));ctx.closePath();ctx.fillStyle=color;ctx.fill();}
+function ring(zFn,start=0,end=pi2,n=180){return Array.from({length:n+1},(_,i)=>{const t=start+(end-start)*i/n,x=Math.cos(t),y=Math.sin(t);return[x,y,zFn(x,y)];});}
+function render(){
+ if(W<=0||H<=0)return;fitView();ctx.clearRect(0,0,W,H);ctx.lineCap="round";ctx.lineJoin="round";const q=geometry();
+ // The ground circle is the constraint in the x1-x2 plane, not a level curve of f.
+ for(let v=-1;v<=1.01;v+=.5){poly([[-1.25,v,0],[1.25,v,0]],"#dce6db",.8);poly([[v,-1.25,0],[v,1.25,0]],"#dce6db",.8);}
+ poly(ring(()=>0),"#b5bfb2",1.5,null,[4,4]);
+ // Every vertex uses the actual quadratic height; paint far to near.
+ const sorted=mesh.map(cell=>({...cell,depth:cell.corners.reduce((s,p)=>s+project(p)[2],0)/4})).sort((a,b)=>a.depth-b.depth);
+ for(const cell of sorted){const k=Math.min(1,cell.height/23),r=Math.round(164-58*k),g=Math.round(198-37*k),b=Math.round(163-27*k);poly(cell.corners,"rgba(93,133,105,.12)",.45,`rgba(${r},${g},${b},.66)`);}
+ for(let i=0;i<28;i++){const t=i*pi2/28,x=Math.cos(t),y=Math.sin(t);poly([[x,y,0],[x,y,f(x,y)]],"rgba(166,135,83,.21)",.8);}
+ if(showTangency.checked){
+  poly(q.plane.concat([q.plane[0]]),"rgba(132,99,163,.58)",1.1,"rgba(155,125,184,.22)");
+  for(const a of [-.4,0,.4])poly([q.planePoint(a,-.48),q.planePoint(a,.48)],"rgba(132,99,163,.22)",.7);
+  for(const b of [-.24,0,.24])poly([q.planePoint(-.77,b),q.planePoint(.77,b)],"rgba(132,99,163,.22)",.7);
+ }
+ poly(ring(()=>0),"#a99572",1.3,null,[4,5]);
+ poly(ring(f),"#fff9e9",5);poly(ring(f),"#bf843b",2.8);
+ poly([[-1.36,0,0],[1.36,0,0]],"#758d7a",1.1);poly([[0,-1.36,0],[0,1.36,0]],"#758d7a",1.1);poly([[0,0,0],[0,0,22]],"#879c88",1.1);
+ label("x₁",[1.4,0,0],"#3f6050",[9,4]);label("x₂",[0,1.4,0],"#3f6050",[5,4]);label("高度 f(x)",[0,0,23],"#3f6050",[0,-5]);
+ for(const z of [0,7,14,21]){poly([[-.025,0,z],[.025,0,z]],"#879c88",1);label(String(z),[0,0,z],"#6f8274",[-9,0],"right");}
+ for(const [t,color,word,off] of [[maxAngle,"#c45741","最高处",[0,-17]],[minAngle,"#4879af","最低处",[0,17]]]){
+  for(const sign of [1,-1]){const x=sign*Math.cos(t),y=sign*Math.sin(t);dot([x,y,f(x,y)],color,4);if(sign===1)label(word,[x,y,f(x,y)],color,off);}
+ }
+ poly([[q.x,q.y,0],q.point],"#bc903b",1.8,null,[4,4]);dot([q.x,q.y,0],"#e6b94e",4.3);
+ if(showTangency.checked){
+  const a=add(q.point,q.unitT,-.70),b=add(q.point,q.unitT,.70);
+  poly([a,b],"#ffffffd9",5.8);poly([a,b],"#8463a3",3);
+  arrow(q.point,q.ascent,"#bf577b",3.1);
+  label("切线",b,"#76558f",[9,0],"left");label("上升",add(q.point,q.ascent),"#b4486d",[9,-2],"left");
+  if(q.stationary){
+   // The corner is constructed in 3D; the oblique camera need not project it to 90°.
+   const a=add(q.point,q.unitT,.105),b=add(a,q.unitAscent,.105),c=add(q.point,q.unitAscent,.105);
+   poly([a,b,c],"#8961a6",1.25);
+  }
+ }
+ dot(q.point,"#e2ad34",6);
+ if(showGradients.checked){
+  const gn=Math.hypot(...q.gradient),L=.64,p=[q.x,q.y,.13];
+  arrow(p,[L*q.gradient[0]/gn,L*q.gradient[1]/gn,0],"#cf852f",5.4);arrow(p,[L*q.x,L*q.y,0],"#3d9e9b",2.3);
+  poly([[q.x+.28*q.baseTangent[0],q.y+.28*q.baseTangent[1],.13],[q.x-.28*q.baseTangent[0],q.y-.28*q.baseTangent[1],.13]],"#8463a3",1.6,null,[3,3]);
+ }
+}
+function update(){
+ const q=geometry();slider.value=String(theta*180/Math.PI);
+ document.getElementById("angle-value").value=`${(theta*180/Math.PI).toFixed(1)}°`;
+ document.getElementById("height-value").textContent=q.height.toFixed(3);
+ document.getElementById("coordinates").textContent=`  (x₁, x₂) = (${q.x.toFixed(2)}, ${q.y.toFixed(2)})`;
+ const relation=document.getElementById("relation");
+ relation.textContent=q.stationary?`${q.height>7?"最高处":"最低处"}：切线水平、在切平面内；底面梯度与曲面上升方向都和切线垂直。`:"切线仍在切平面内，但有倾斜；沿着这条路，还能升高或降低。";
+ relation.dataset.stationary=String(q.stationary);document.getElementById("gradient-legend").hidden=!showGradients.checked;
+ document.getElementById("tangent-legend").hidden=!showTangency.checked;document.getElementById("ascent-legend").hidden=!showTangency.checked;
+ canvas.dataset.height=q.height.toFixed(9);canvas.dataset.theta=theta.toFixed(9);render();
+}
+function resize(){const rect=stage.getBoundingClientRect(),ratio=Math.min(2,devicePixelRatio||1);W=rect.width;H=rect.height;canvas.width=Math.round(W*ratio);canvas.height=Math.round(H*ratio);ctx.setTransform(ratio,0,0,ratio,0,0);render();}
+slider.addEventListener("input",()=>{theta=Number(slider.value)*Math.PI/180;update();});
+for(const [id,t] of [["maximum",maxAngle],["minimum",minAngle]])document.getElementById(id).addEventListener("click",()=>{theta=t;showTangency.checked=true;showGradients.checked=true;update();});
+document.getElementById("reset").addEventListener("click",()=>{yaw=initial.yaw;elevation=initial.elevation;render();});showGradients.addEventListener("change",update);showTangency.addEventListener("change",update);
+canvas.addEventListener("pointerdown",event=>{drag={x:event.clientX,y:event.clientY,yaw,elevation};canvas.setPointerCapture(event.pointerId);});
+canvas.addEventListener("pointermove",event=>{if(!drag)return;yaw=drag.yaw+(event.clientX-drag.x)*.009;elevation=Math.min(1.24,Math.max(.23,drag.elevation+(event.clientY-drag.y)*.006));render();});
+canvas.addEventListener("pointerup",()=>{drag=null;});canvas.addEventListener("pointercancel",()=>{drag=null;});
+new ResizeObserver(resize).observe(stage);update();resize();
+window.lagrangeFigure={matrix:[[3,0],[1,2]],maximum:7+Math.sqrt(13),minimum:7-Math.sqrt(13),zscale,getGeometry:geometry,getState:()=>({theta,yaw,elevation,height:f(Math.cos(theta),Math.sin(theta)),gradients:showGradients.checked,tangency:showTangency.checked,geometry:geometry()})};
+})();
+</script>
+</body>
+</html>

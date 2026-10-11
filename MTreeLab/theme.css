@@ -1,0 +1,154 @@
+/* Theme colours are centralized here; figures and videos retain their own colours. */
+:root { color-scheme: light; }
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-height: 38px; padding: 7px 12px; border: 1px solid var(--line, #dce4dd);
+  border-radius: 24px; color: var(--muted, #6c8081); background: transparent;
+  font: 12px/1.5 var(--sans, "Segoe UI", sans-serif); white-space: nowrap;
+}
+.theme-toggle:hover { color: var(--teal, #28786b); background: var(--teal-soft, #e4efe7); }
+.theme-toggle svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.theme-toggle .theme-sun { display: none; }
+.header-actions .theme-label { font: inherit; color: inherit; margin: 0; }
+html[data-theme="dark"] .theme-toggle .theme-moon { display: none; }
+html[data-theme="dark"] .theme-toggle .theme-sun { display: inline; }
+@media (max-width: 850px) {
+  .theme-toggle { width: 38px; padding: 7px; flex: 0 0 38px; }
+  .header-actions .theme-label { display: none; }
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #111c23; --ink: #e1eae9; --muted: #a0b3b8;
+  --teal: #80cdbb; --teal-soft: #203c3b; --line: #34474f;
+  --surface: #192831; --surface-raised: #20333c; --surface-hover: #29434a;
+  --read-bg: #213d54; --read-line: #6c9ec4; --read-ink: #b6d9f4;
+  --understood-bg: #3b3055; --understood-line: #af8ed4; --understood-ink: #d9bcf4;
+  --incoming: #77d0d8; --outgoing: #edb77f; --related: #c1a7e6; --contains: #c3b69a;
+  background: var(--paper); color: var(--ink); scrollbar-color: #506773 var(--paper);
+}
+html[data-theme="dark"] body { background: var(--paper); color: var(--ink); }
+html[data-theme="dark"] ::selection { background: #355962; color: #f1f7f6; }
+html[data-theme="dark"] :is(button, a, input, select, textarea):focus-visible { outline-color: var(--teal); }
+html[data-theme="dark"] :is(input, textarea, select) { background: var(--surface); border-color: var(--line); color: var(--ink); }
+html[data-theme="dark"] :is(input, textarea)::placeholder { color: #9aafb5; }
+html[data-theme="dark"] :is(.small-button, .search-form, .search-results, .graph-tools, .resource-chip, .article-directory, .article-read-toggle, .route-card, .route-steps, .workspace-intro, .exercise-card, .map-directory-list button, .reader-tools button, .lesson-components a, .lesson-subjects>a, #subject-switch, #learning-route-switch) {
+  background: var(--surface); border-color: var(--line);
+}
+html[data-theme="dark"] .search-form input { background: transparent; }
+html[data-theme="dark"] .search-icon { stroke: var(--muted); }
+html[data-theme="dark"] :is(.primary-button, .search-submit) { background: #80cdbb; color: #102d29; }
+html[data-theme="dark"] :is(.primary-button, .search-submit):hover { background: #a0dfce; }
+html[data-theme="dark"] :is(.icon-button, .graph-tools button, .lesson-subjects>a):hover { background: var(--surface-hover); }
+html[data-theme="dark"] .toast { background: var(--surface-raised); color: var(--ink); border: 1px solid var(--line); }
+html[data-theme="dark"] :is(.home-hero .eyebrow, .scroll-invitation, .reader-english, .reader-objective span, .end-symbol, .end-scroll-hint, .graph-hint, .lesson-subjects em) { color: var(--muted); }
+
+/* SVG diagrams use CSS for both node states and their gradient stops. */
+html[data-theme="dark"] .graph-frame { background: radial-gradient(ellipse at 45% 35%, #1c323c, #14232d 75%); border-color: var(--line); }
+html[data-theme="dark"] #knowledge-water stop:nth-child(1) { stop-color: #19323a; }
+html[data-theme="dark"] #knowledge-water stop:nth-child(2) { stop-color: #1b303c; }
+html[data-theme="dark"] #knowledge-water stop:nth-child(3) { stop-color: #1b2c3c; }
+html[data-theme="dark"] #knowledge-water stop:nth-child(4) { stop-color: #1b293a; }
+html[data-theme="dark"] #surface-light stop { stop-color: #5c8f98; }
+html[data-theme="dark"] #surface-light stop:first-child { stop-opacity: .12; }
+html[data-theme="dark"] .graph-cluster { fill: #385461; opacity: .23; }
+html[data-theme="dark"] .depth-contours path { stroke: #81aab5; opacity: .06; }
+html[data-theme="dark"] .graph-node:not(.read):not(.understood) circle.node-disc { fill: #253e48; stroke: #719aa4; }
+html[data-theme="dark"] .graph-node.primary:not(.read):not(.understood) circle.node-disc { fill: #294d50; stroke: #8abeb6; }
+html[data-theme="dark"] .graph-node.placeholder:not(.read):not(.understood) circle.node-disc { fill: #1c3039; stroke: #617a85; }
+html[data-theme="dark"] .graph-node.read circle.node-disc { fill: var(--read-bg); stroke: var(--read-line); }
+html[data-theme="dark"] .graph-node.understood circle.node-disc { fill: var(--understood-bg); stroke: var(--understood-line); }
+html[data-theme="dark"] .graph-node text { fill: var(--ink); }
+html[data-theme="dark"] .graph-node text.node-english { fill: #b0c6ce; }
+html[data-theme="dark"] .graph-node .read-check { fill: var(--read-ink); }
+html[data-theme="dark"] .graph-node .understood-check { fill: var(--understood-ink); }
+html[data-theme="dark"] :is(.graph-node:hover, .graph-node:focus-visible, .graph-node.selected, .graph-node.exploration-focus) circle.node-disc { stroke: var(--teal); }
+html[data-theme="dark"] .graph-edges path.relation-edge { stroke: #99bbc4; opacity: .42; }
+html[data-theme="dark"] .graph-edges path.relation-edge.related { stroke: var(--related); opacity: .32; }
+html[data-theme="dark"] .graph-edges path.relation-edge.contains { stroke: var(--contains); }
+html[data-theme="dark"] .graph-edges path.relation-edge.requires { stroke: var(--outgoing); }
+html[data-theme="dark"] .graph-edges path.relation-edge.incoming { stroke: var(--incoming); }
+html[data-theme="dark"] .graph-edges path.relation-edge.outgoing { stroke: var(--outgoing); }
+html[data-theme="dark"] .graph-edges path.relation-edge.focused { opacity: 1; }
+html[data-theme="dark"] .graph-edges.has-focus path.relation-edge:not(.focused) { opacity: .1; }
+html[data-theme="dark"] .graph-node.relation-current circle.relation-halo { stroke: #97c2c8; }
+html[data-theme="dark"] .graph-node.relation-prerequisite circle.relation-halo { stroke: var(--incoming); }
+html[data-theme="dark"] .graph-node.relation-dependent:not(.relation-prerequisite) circle.relation-halo,
+html[data-theme="dark"] .graph-node.relation-prerequisite.relation-dependent circle.relation-halo-secondary { stroke: var(--outgoing); }
+html[data-theme="dark"] .graph-node.relation-related circle.relation-halo { stroke: var(--related); }
+html[data-theme="dark"] .graph-node.relation-contained circle.relation-halo { stroke: var(--contains); }
+html[data-theme="dark"] .hierarchical-graph .graph-hint { border-color: var(--line); }
+
+/* The same blue/purple distinction remains in controls and directories. */
+html[data-theme="dark"] :is(.legend-disc.read, .read-dot) { background: var(--read-bg); border-color: var(--read-line); }
+html[data-theme="dark"] .read-dot { background: var(--read-line); }
+html[data-theme="dark"] :is(.legend-disc.understood, .understood-dot) { background: var(--understood-bg); border-color: var(--understood-line); }
+html[data-theme="dark"] .understood-dot { background: var(--understood-line); }
+html[data-theme="dark"] .legend-disc:not(.read):not(.understood) { background: #253e48; border-color: #719aa4; }
+html[data-theme="dark"] :is(.map-directory-list button.read, .requirement-node.read, .reader-tools .read-toggle[aria-pressed="true"], .article-read-toggle[aria-pressed="true"]) { background: var(--read-bg); border-color: var(--read-line); color: var(--read-ink); }
+html[data-theme="dark"] :is(.map-directory-list button.understood, .requirement-node.understood, .reader-tools .understood-toggle[aria-pressed="true"]) { background: var(--understood-bg); border-color: var(--understood-line); color: var(--understood-ink); }
+html[data-theme="dark"] :is(.lesson-progress.read, .article-current-list li>span, .requirement-node.read em) { color: var(--read-ink); }
+html[data-theme="dark"] :is(.lesson-progress.understood, .requirement-node.understood em) { color: var(--understood-ink); }
+
+/* Reading surfaces, including the distinct mathematical environments. */
+html[data-theme="dark"] .lesson-content a { border-bottom-color: #466b66; }
+html[data-theme="dark"] .lesson-content a[data-node] { background: linear-gradient(transparent 74%, #264b44 74%); }
+html[data-theme="dark"] .lesson-content blockquote:not(.math-environment) { background: #1d3334; color: #c7dbd4; border-left-color: #82b4a3; }
+html[data-theme="dark"] .lesson-content :is(pre, :not(pre)>code) { background: #203039; color: #d3e3df; }
+html[data-theme="dark"] .lesson-content :is(td, th) { border-color: var(--line); }
+html[data-theme="dark"] .lesson-content th { background: var(--surface-raised); }
+html[data-theme="dark"] .references li:target { background: var(--surface-raised); }
+html[data-theme="dark"] .empty-lesson .empty-disc { background: var(--surface); color: var(--teal); border-color: var(--line); }
+html[data-theme="dark"] .lesson-content .math-environment { --env-ink: #8ed7d5; --env-line: #3a636b; --env-bg: #1a333a; }
+html[data-theme="dark"] .lesson-content .math-environment--theorem { --env-ink: #c0c6fa; --env-line: #4b5377; --env-bg: #252c44; }
+html[data-theme="dark"] .lesson-content .math-environment--lemma { --env-ink: #a1cce8; --env-line: #3e6076; --env-bg: #1d3142; }
+html[data-theme="dark"] .lesson-content :is(.math-environment--proposition, .math-environment--corollary) { --env-ink: #bbc4ee; --env-line: #4d5775; --env-bg: #252f43; }
+html[data-theme="dark"] .lesson-content .math-environment--proof { --env-ink: #b8c6c8; --env-line: #4e6168; --env-bg: #202d34; border-left-color: #7e9399; }
+html[data-theme="dark"] .lesson-content .math-environment--explanation { --env-ink: #dfc7a2; --env-line: #66563f; --env-bg: #332e26; }
+html[data-theme="dark"] .lesson-content .math-environment--example { --env-ink: #f1be91; --env-line: #805d3d; --env-bg: #392d25; }
+html[data-theme="dark"] .lesson-content .math-environment--remark { --env-ink: #cccfb1; --env-line: #565e4b; --env-bg: #2b322b; }
+html[data-theme="dark"] .lesson-content blockquote.math-environment { color: var(--ink); }
+html[data-theme="dark"] .lesson-content .math-environment a[data-node] { background: none; }
+
+/* Prerequisite exploration and its hover inspector. */
+html[data-theme="dark"] :is(.relation-inspector, .exploration-frontier, .exploration-controls button, .exploration-controls a, .relation-inspector-row button) { background: var(--surface); border-color: var(--line); color: var(--ink); }
+html[data-theme="dark"] :is(.concept-explorer-heading h1, .exploration-frontier-section>h2, .external-resource-copy>strong) { color: var(--ink); }
+html[data-theme="dark"] :is(.exploration-summary, .exploration-auto, .exploration-frontier, .relation-legend, .relation-inspector-heading small, .relation-inspector-row h3 span, .relation-inspector-row button small, .relation-inspector-note, .relation-none, .concept-explorer-heading h1 span, .concept-explorer-heading h1 small, .exploration-subject-link, .exploration-frontier-section>h2 span, .exploration-frontier-section>p, .exploration-frontier :is(p, h2 small, h3 small), .exploration-frontier>summary small, .exploration-auto span, .relation-legend small, .exploration-frontier-row>details>summary, .exploration-frontier [data-expand-anchor] small, .exploration-frontier [data-hidden-count], .exploration-frontier [data-explore-focus] small) { color: var(--muted); }
+html[data-theme="dark"] :is(.exploration-summary strong, .exploration-frontier>summary, .exploration-frontier h2, .exploration-frontier h3, .exploration-frontier [data-expand-anchor], .exploration-frontier [data-explore-focus], .exploration-controls #read-exploration-target) { color: var(--teal); }
+html[data-theme="dark"] :is(.exploration-frontier [data-explore-focus], .exploration-controls #read-exploration-target) { background: var(--surface-raised); }
+html[data-theme="dark"] :is(.exploration-controls button, .exploration-controls a, .relation-inspector-row button, .exploration-frontier [data-explore-focus]):hover { background: var(--surface-hover); border-color: #70979f; }
+html[data-theme="dark"] .exploration-frontier-row { border-color: var(--line); }
+html[data-theme="dark"] .exploration-boundary circle { fill: var(--surface-raised); }
+html[data-theme="dark"] .exploration-boundary:hover circle { fill: var(--surface-hover); }
+html[data-theme="dark"] :is(.exploration-boundary text, .learning-band-title) { fill: var(--teal); }
+html[data-theme="dark"] :is(.learning-band-english, .learning-band-number) { fill: var(--muted); }
+html[data-theme="dark"] :is(.prerequisite-key, .relation-inspector-row.prerequisites h3, .exploration-controls button[data-expand-direction="prerequisites"]) { color: var(--incoming); }
+html[data-theme="dark"] :is(.dependent-key, .relation-inspector-row.dependents h3, .exploration-controls button[data-expand-direction="dependents"]) { color: var(--outgoing); }
+html[data-theme="dark"] :is(.related-key, .relation-inspector-row.related h3, .exploration-controls button[data-expand-direction="related"]) { color: var(--related); }
+html[data-theme="dark"] .exploration-boundary[data-direction="prerequisites"] text { fill: var(--incoming); }
+html[data-theme="dark"] .exploration-boundary[data-direction="dependents"] text { fill: var(--outgoing); }
+html[data-theme="dark"] .exploration-boundary[data-direction="related"] text { fill: var(--related); }
+html[data-theme="dark"] :is(.exploration-limit, .exploration-budget-note) { background: #332e26; border-color: #66563f; color: #dfc7a2; }
+html[data-theme="dark"] :is(.exploration-limit a, .exploration-budget-note a) { color: var(--teal); }
+
+/* Exercises and external references keep their own visual meaning. */
+html[data-theme="dark"] :is(.lesson-practice>a, .exercise-card-heading .eyebrow, .exercise-open, .connection-label, .article-selection-status, .exercise-result .result-arrow) { color: var(--outgoing); }
+html[data-theme="dark"] :is(.requirement-node, .requirement-target>span) { background: #382f25; border-color: #8f714e; }
+html[data-theme="dark"] .requirement-target>span { color: var(--outgoing); }
+html[data-theme="dark"] .requirement-node:hover { background: #45392c; }
+html[data-theme="dark"] .requirement-node em { color: var(--muted); }
+html[data-theme="dark"] .exercise-open { border-color: var(--line); }
+html[data-theme="dark"] .external-resource-card { background: linear-gradient(120deg, var(--surface), #1a3034); border-color: var(--line); }
+html[data-theme="dark"] .external-resource-icon { background: var(--teal-soft); border-color: #486d66; }
+html[data-theme="dark"] :is(.external-resource-type, .external-resource-arrow) { color: var(--teal); }
+html[data-theme="dark"] :is(.external-resource-english, .external-resource-description, .external-resource-provider, .external-resource-provider>span, .external-resources>header p>span) { color: var(--muted); }
+html[data-theme="dark"] .writer-dialog { border-color: var(--line); }
+html[data-theme="dark"] .authoring-help code { background: var(--surface-raised); }
+html[data-theme="dark"] .writer-status.error { color: #f0a494; }
+
+/* The licence page uses the same stored preference as the learning website. */
+html[data-theme="dark"] .license-page a { color: var(--teal); }
+html[data-theme="dark"] .license-page :is(.english, .eyebrow, footer) { color: var(--muted); }
+html[data-theme="dark"] .license-page :is(.notice, footer) { border-color: var(--line); }
+html[data-theme="dark"] .license-page .notice { background: var(--surface); }
+.license-page .theme-toggle { float: right; }

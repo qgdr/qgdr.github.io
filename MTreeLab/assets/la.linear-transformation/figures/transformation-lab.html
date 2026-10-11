@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>放大与平移 / Scaling and Translation</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:20px 22px;background:#f8fbfc;color:#244758;font:15px/1.5 system-ui,"Microsoft YaHei",sans-serif}h1{font-size:18px;margin:0 0 12px}button{font:inherit;border:1px solid #c8dade;border-radius:18px;padding:6px 16px;background:white;color:#34596b;cursor:pointer;margin-right:8px}button[aria-pressed=true]{background:#236b79;color:white;border-color:#236b79}button:focus-visible,input:focus-visible{outline:3px solid #d59633;outline-offset:3px}.slider{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:13px}.slider input{flex:1;max-width:370px;accent-color:#267688}output{width:38px;font-variant-numeric:tabular-nums}svg{display:block;width:100%;height:auto;max-height:295px;margin:4px auto}svg text{font-family:system-ui,"Microsoft YaHei",sans-serif}p{margin:8px 0 0;min-height:42px}.legend{font-size:12px;color:#587583}.key{display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 4px 0 12px}.key:first-child{margin-left:0}@media(max-width:600px){body{padding:12px}h1{font-size:16px}p{font-size:13px}}
+</style>
+<h1>放大两倍，还是向右平移一格？</h1>
+<div role="group" aria-label="选择变换">
+<button data-mode="scale" aria-pressed="true">放大两倍</button>
+<button data-mode="translation" aria-pressed="false">向右平移</button>
+</div>
+<label class="slider">变换进度 <input id="progress" type="range" min="0" max="100" value="100"><output id="percent">100%</output></label>
+<svg id="view" viewbox="0 0 880 300" role="img" aria-labelledby="title desc">
+<title id="title">比较箭头在放大和平移前后的变化</title>
+<desc id="desc">左图绿色箭头是u，蓝色箭头是2u。右图显示变换后的箭头；淡色虚线保留原来的箭头，橙色点表示零向量变换后的位置。</desc>
+<defs>
+<marker id="green" viewbox="0 0 10 10" refx="8" refy="5" markerwidth="6" markerheight="6" orient="auto"><path d="M0 0L9 5L0 10Z" fill="#23897d"></marker>
+<marker id="blue" viewbox="0 0 10 10" refx="8" refy="5" markerwidth="6" markerheight="6" orient="auto"><path d="M0 0L9 5L0 10Z" fill="#487ab1"></marker>
+</defs>
+<g id="drawing"></g>
+</svg>
+<p id="caption" aria-live="polite"></p>
+<div class="legend"><span class="key" style="background:#23897d"></span>u<span class="key" style="background:#487ab1"></span>2u<span class="key" style="background:#d48b2d"></span>零向量变换后的位置</div>
+<script>
+'use strict';
+const ns='http://www.w3.org/2000/svg',drawing=document.getElementById('drawing'),input=document.getElementById('progress'),caption=document.getElementById('caption');
+let mode='scale';
+const U=[.9,.4],D=[1.8,.8];
+function el(tag,attrs){const n=document.createElementNS(ns,tag);for(const [key,value] of Object.entries(attrs))n.setAttribute(key,value);drawing.appendChild(n);return n;}
+function label(x,y,value,color='#526f7c',size=13){const n=el('text',{x,y,fill:color,'font-size':size});n.textContent=value;}
+function xy(p,cx){return[cx+42*p[0],200-42*p[1]];}
+function change(p,s){return mode==='scale'?p.map(v=>v*(1+s)):[p[0]+s,p[1]];}
+function arrow(p,cx,color,marker,ghost=false){const [x,y]=xy(p,cx);el('line',{x1:cx,y1:200,x2:x,y2:y,stroke:color,'stroke-width':ghost?1.6:2.8,...(ghost?{'stroke-dasharray':'4 4',opacity:.25}:{'marker-end':`url(#${marker})`})});}
+function panel(cx,s,after){
+ el('rect',{x:cx-174,y:46,width:348,height:240,rx:16,fill:'white',stroke:'#e0ebef'});
+ label(cx-150,31,after?'变化后的箭头':'原来的箭头');
+ for(let k=-3;k<=3;k++){
+  const x=cx+42*k,y=200-42*k;
+  el('line',{x1:x,y1:70,x2:x,y2:275,stroke:k===0?'#abc4d0':'#e6eef2','stroke-width':k===0?1.2:.8});
+  if(y>=60&&y<=275)el('line',{x1:cx-155,y1:y,x2:cx+155,y2:y,stroke:k===0?'#abc4d0':'#e6eef2','stroke-width':k===0?1.2:.8});
+ }
+ if(after){arrow(D,cx,'#487ab1','blue',true);arrow(U,cx,'#23897d','green',true);}
+ const u=change(U,s),d=change(D,s);
+ arrow(d,cx,'#487ab1','blue');arrow(u,cx,'#23897d','green');
+ const [ux,uy]=xy(u,cx),[dx,dy]=xy(d,cx);
+ label(ux+3,uy+19,after?'T(u)':'u','#23897d');label(dx+3,dy-10,after?'T(2u)':'2u','#487ab1');
+ el('circle',{cx,cy:200,r:2.5,fill:'#9db5c0'});
+ const [ox,oy]=xy(change([0,0],s),cx);
+ el('circle',{cx:ox,cy:oy,r:4.3,fill:'#d48b2d',stroke:'white','stroke-width':1.2});
+ label(ox-3,oy+21,after?'T(0)':'0','#b77322',12);
+}
+function draw(){
+ drawing.replaceChildren();const s=Number(input.value)/100;
+ panel(206,0,false);panel(674,s,true);label(428,164,'→','#7796a4',27);
+ document.getElementById('percent').textContent=input.value+'%';
+ caption.dataset.mode=mode;
+ caption.textContent=s===0?'拖动滑块，看看同一组箭头怎样变化。':mode==='scale'?'蓝色箭头原来是绿色箭头的两倍，放大后仍是两倍；橙色点仍在原点。':'两支箭头的终点各向右移一格后，蓝色箭头不再是绿色箭头的两倍；橙色点也离开了原点。';
+}
+document.querySelectorAll('button[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));input.value='100';draw();}));
+input.addEventListener('input',draw);draw();
+</script>
+</html>
