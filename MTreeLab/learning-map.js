@@ -26,6 +26,7 @@
   }
   function layout(inputNodes, inputEdges, options = {}) {
     const metadata = configuration(options.metadata);
+    const focused=Boolean(options.focusId);
     const nodes = inputNodes.filter(node=>node.kind!=='exercise');
     const byId = new Map(nodes.map(node=>[node.id,node]));
     const ids = new Set(byId.keys());
@@ -77,10 +78,12 @@
       const requested=rank.get(details.get(id).stage) ?? 0;
       const stage=Math.max(requested,...[...parent.get(id)].map(source=>effectiveStage.get(source)));
       effectiveStage.set(id,stage);
-      depth.set(id,Math.max(-1,...[...parent.get(id)].filter(source=>effectiveStage.get(source)===stage).map(source=>depth.get(source)))+1);
+      depth.set(id,Math.max(-1,...[...parent.get(id)].filter(source=>focused||effectiveStage.get(source)===stage).map(source=>depth.get(source)))+1);
     });
     const width=Math.max(440,Number(options.width)||1160);
     const left=118,right=width-118,span=right-left;
+    // Tighten learning distances while keeping the full-size bilingual label boxes.
+    const spacing=.8;
     const points=new Map(),bands=[],occupied=[];
     const noise=(id,salt=0)=>{
       let value=2166136261;
@@ -92,20 +95,26 @@
     const clamp=x=>Math.max(left,Math.min(right,x));
     let cursor=45;
     metadata.stages.forEach((stage,stageIndex)=>{
-      const group=topological.filter(id=>effectiveStage.get(id)===stageIndex);
+      // A concept's prerequisite chain spans stages. Pack it together rather than
+      // adding an empty stage margin before each successive prerequisite.
+      const group=focused?(stageIndex===0?topological:[]):topological.filter(id=>effectiveStage.get(id)===stageIndex);
       if(!group.length)return;
       const bandStart=cursor;
       group.forEach((id,index)=>{
         const info=details.get(id),parents=[...parent.get(id)].map(source=>points.get(source)).filter(Boolean);
         const parentX=parents.length?parents.reduce((sum,p)=>sum+p.x,0)/parents.length:null;
         const rootX=left+span*((noise(id,1)+index*.61803398875)%1);
-        const preferredX=parentX===null?rootX:clamp(parentX+(noise(id,2)-.5)*Math.min(400,span*.95));
-        const minimumY=Math.max(bandStart+108+noise(id,3)*88,...parents.map(p=>p.y+205+noise(id,4)*65));
-        const preferredY=Math.max(minimumY,bandStart+162+(info.difficulty-1)*104+(info.complexity-1)*58+depth.get(id)*74+(noise(id,5)-.5)*120);
+        const preferredX=parentX===null?rootX:clamp(parentX+(noise(id,2)-.5)*Math.min(400,span*.95)*spacing);
+        const minimumY=focused
+          ?Math.max(130,...parents.map(p=>p.y+205*spacing))
+          :Math.max(bandStart+(108+noise(id,3)*88)*spacing,...parents.map(p=>p.y+(205+noise(id,4)*65)*spacing));
+        const preferredY=focused
+          ?Math.max(minimumY,130+depth.get(id)*205*spacing+(info.difficulty-1)*12+(info.complexity-1)*10+effectiveStage.get(id)*12+(noise(id,5)-.5)*28)
+          :Math.max(minimumY,bandStart+(162+(info.difficulty-1)*104+(info.complexity-1)*58+depth.get(id)*74+(noise(id,5)-.5)*120)*spacing);
         let best=null;
         // Search continuous positions, not fixed rows/columns. Collision boxes include English labels.
         for(let descent=0;descent<Math.max(180,nodes.length*5);descent++){
-          const y=preferredY+descent*51+(descent?noise(id,descent+20)*29:0);
+          const y=preferredY+(descent*51+(descent?noise(id,descent+20)*29:0))*spacing;
           if(best&&y-preferredY>best.score)break;
           const candidates=[preferredX,left+noise(id,8)*16,right-noise(id,9)*16];
           for(let sample=0;sample<24;sample++)candidates.push(left+span*((noise(id,7)+sample*.61803398875)%1));
@@ -118,13 +127,22 @@
         }
         if(!best)throw new Error(`Cannot place learning node ${id} without overlapping its label.`);
         const x=Math.round(best.x*100)/100,y=Math.round(best.y*100)/100,box=bounds(x,y);
-        points.set(id,{x,y,stage:stage.id,depth:depth.get(id),row:index,column:null,
+        points.set(id,{x,y,stage:metadata.stages[effectiveStage.get(id)].id,depth:depth.get(id),row:index,column:null,
           difficulty:info.difficulty,complexity:info.complexity,bounds:box});
         occupied.push(box);
       });
-      cursor=Math.max(...group.map(id=>points.get(id).y))+140;
+      cursor=Math.max(...group.map(id=>points.get(id).y))+140*spacing;
       bands.push({...stage,index:stageIndex,x:0,y:bandStart,width,height:cursor-bandStart,count:group.length,rows:group.length});
     });
+    if(focused){
+      bands.length=0;
+      metadata.stages.forEach((stage,index)=>{
+        const group=[...points.values()].filter(point=>point.stage===stage.id);
+        if(!group.length)return;
+        const y=Math.min(...group.map(point=>point.bounds.top));
+        bands.push({...stage,index,x:0,y,width,height:Math.max(...group.map(point=>point.bounds.bottom))-y,count:group.length,rows:group.length});
+      });
+    }
     return {points,width,height:Math.max(360,cursor+45),bands,warnings,metadata};
   }
   function bandsSVG(result) {

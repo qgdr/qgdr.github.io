@@ -1,7 +1,7 @@
 /* Add a small set of concepts without moving the learner's existing landmarks. */
 (() => {
   'use strict';
-  const GAP=205;
+  const spacing=.8,GAP=205*spacing;
   const noise=(id,salt=0)=>{
     let value=2166136261;
     for(const char of `${id}:${salt}`){value^=char.codePointAt(0);value=Math.imul(value,16777619);}
@@ -16,7 +16,7 @@
     const width=Math.max(440,Number(previous?.width||options.width)||1160);
     const anchorId=options.focusId||previous?.focusId||previous?.points?.keys().next().value;
     const full=reason=>{
-      const result=MTreeLearningMap.layout(nodes,inputEdges,{metadata,width});
+      const result=MTreeLearningMap.layout(nodes,inputEdges,{metadata,width,focusId:anchorId});
       const oldAnchor=previous?.points?.get(anchorId),newAnchor=result.points.get(anchorId);
       const oldPosition=oldAnchor?position(oldAnchor):null;
       const anchorDelta=oldPosition&&newAnchor?{x:newAnchor.x-oldPosition.x,y:newAnchor.y-oldPosition.y}:{x:0,y:0};
@@ -83,17 +83,17 @@
       const focus=points.get(anchorId),anchors=[...parentPoints,...childPoints];
       const reference=anchors.length?anchors:neighbourPoints.length?neighbourPoints:focus?[focus]:[];
       const centreX=reference.length?reference.reduce((sum,p)=>sum+p.x,0)/reference.length:left+span*noise(id,1);
-      const preferredX=clamp(centreX+(noise(id,2)-.5)*Math.min(span*.75,300));
+      const preferredX=clamp(centreX+(noise(id,2)-.5)*Math.min(span*.75,300)*spacing);
       const minimum=Math.max(lower.get(id),...parentPoints.map(p=>p.y+GAP));
       const maximum=upper.get(id);
       if(minimum>maximum+.01)return full('bridge-space');
       let preferredY;
       if(parentPoints.length&&childPoints.length)preferredY=(Math.max(...parentPoints.map(p=>p.y))+Math.min(...childPoints.map(p=>p.y)))/2;
-      else if(parentPoints.length)preferredY=Math.max(...parentPoints.map(p=>p.y))+235+noise(id,3)*45;
-      else if(childPoints.length)preferredY=Math.min(...childPoints.map(p=>p.y))-235-noise(id,3)*45;
-      else if(Number.isFinite(maximum))preferredY=maximum-25-noise(id,4)*35;
-      else if(Number.isFinite(minimum))preferredY=minimum+25+noise(id,4)*35;
-      else preferredY=(reference.length?reference.reduce((sum,p)=>sum+p.y,0)/reference.length:200)+(noise(id,5)-.5)*240;
+      else if(parentPoints.length)preferredY=Math.max(...parentPoints.map(p=>p.y))+(235+noise(id,3)*45)*spacing;
+      else if(childPoints.length)preferredY=Math.min(...childPoints.map(p=>p.y))-(235+noise(id,3)*45)*spacing;
+      else if(Number.isFinite(maximum))preferredY=maximum-(25+noise(id,4)*35)*spacing;
+      else if(Number.isFinite(minimum))preferredY=minimum+(25+noise(id,4)*35)*spacing;
+      else preferredY=(reference.length?reference.reduce((sum,p)=>sum+p.y,0)/reference.length:200)+(noise(id,5)-.5)*240*spacing;
       preferredY=Math.max(minimum,Math.min(maximum,preferredY));
       const xCandidates=[preferredX,left+noise(id,6)*12,right-noise(id,7)*12];
       for(let sample=0;sample<28;sample++)xCandidates.push(left+span*((noise(id,8)+sample*.61803398875)%1));
@@ -101,7 +101,7 @@
       if(Number.isFinite(minimum))yCandidates.add(minimum);
       if(Number.isFinite(maximum))yCandidates.add(maximum);
       for(let step=1;step<Math.max(80,nodes.length*3);step++){
-        const distance=step*43+noise(id,step+20)*19;
+        const distance=(step*43+noise(id,step+20)*19)*spacing;
         if(preferredY-distance>=minimum)yCandidates.add(preferredY-distance);
         if(preferredY+distance<=maximum)yCandidates.add(preferredY+distance);
       }

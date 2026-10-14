@@ -1,0 +1,66 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>反复积分与截面 · Repeated integration and slices</title>
+<style>
+:root{color-scheme:light;font-family:"Microsoft YaHei",sans-serif;color:#223247;background:#f7f8f5}*{box-sizing:border-box}body{margin:0;padding:22px}main{max-width:1100px;margin:auto}h1{font-size:22px;margin:0 0 7px}p{line-height:1.7;margin:7px 0;color:#64758a;font-size:14px}.controls{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin:17px 0}.choice{display:flex;gap:6px}button{font:inherit;border:1px solid #cfd9de;color:#64758a;background:white;padding:7px 14px;border-radius:8px;cursor:pointer}button[aria-pressed=true]{background:#223247;border-color:#223247;color:white}button:focus-visible,input:focus-visible{outline:3px solid #238ba3;outline-offset:3px}.slider{display:flex;align-items:center;gap:12px;min-width:315px;font-size:14px}.slider input{width:220px;accent-color:#c68b23}.slider output{min-width:75px;font-variant-numeric:tabular-nums}svg{display:block;width:100%;height:auto;background:white;border:1px solid #e3e8e8;border-radius:14px}svg text{font-family:"Microsoft YaHei",sans-serif;fill:#223247;font-size:15px}svg .muted{fill:#64758a;font-size:13px}svg .gold{fill:#a46f16}svg .title{font-size:18px;font-weight:600}.result{display:flex;justify-content:space-between;gap:15px;border-radius:10px;background:#e9eff0;padding:12px 16px;margin-top:12px;font-size:15px;line-height:1.7}.result strong{color:#a46f16}.note{font-size:12px}.legend{display:inline-block;width:80px;height:8px;background:linear-gradient(to right,#238ba3,#c68b23);border-radius:6px;margin:0 6px}
+.legend{width:145px;height:10px;background:linear-gradient(to right,#1B29AE,#245BF0,#0098BE,#00A57A,#67A51B,#F08A00,#E04E3A,#D53B8C,#8C4BE4)}
+</style>
+<main>
+<h1>同一批贡献，换个方向收集</h1>
+<p>反复积分与固定位置的截面 · Repeated integration and fixed-position slices<br>本图取 x = 1 &gt; 0，仅展示从 0 到 x 的正向积分；滑块限定 0 ≤ t ≤ x。</p>
+<div class="controls"><div class="choice" role="group" aria-label="积分次数"><button data-order="1" aria-pressed="false">一次积分</button><button data-order="2" aria-pressed="false">两次积分</button><button data-order="3" aria-pressed="true">三次积分</button></div><label class="slider">固定最内层位置 <i>t</i><input id="position" type="range" min="0" max="1" step="0.001" value="0.375" aria-label="固定最内层位置 t"><output id="position-value">t = 0.375</output></label></div>
+<svg id="diagram" viewbox="0 0 960 420" role="img" aria-labelledby="svg-title svg-desc"><title id="svg-title">三重积分的四面体与同步截面</title><desc id="svg-desc">固定最内层 x₃ = t，左侧为正交坐标框架中的积分区域，右侧将同一截面展开成坐标图。</desc><defs><marker id="arrow" viewbox="0 0 10 10" refx="8" refy="5" markerwidth="6" markerheight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10" fill="none" stroke="#64758a"></marker></defs><g id="scene"></g></svg>
+<div class="result" aria-live="polite"><span id="description"></span><strong id="weight"></strong></div><p id="formula"></p>
+<p class="note">用颜色区分不同的采样值 <span class="legend" aria-hidden="true"></span>；同一函数值使用同一颜色。高亮最邻近的一组采样点；金色线或面表示连续位置 t 的截面。</p>
+<p class="note">每轴分成相同的 8 格，Δ = x / 8。小球是离散采样；积分公式是网格变细后的连续极限。金色截面固定最内层位置 t。一、二重图将尚未启用的方向固定，仅用于保持图形排布；轴名随积分次数更新。© 2026 qgdr · 暂行非商业许可</p>
+</main>
+<script>
+'use strict';
+const NS='http://www.w3.org/2000/svg',scene=document.getElementById('scene'),slider=document.getElementById('position'),N=8,RADIUS=7.2;
+let order=3;
+const C={ink:'#223247',muted:'#64758a',blue:'#238ba3',gold:'#c68b23',grid:'#dce3e6'};
+function el(name,attrs={},value){const n=document.createElementNS(NS,name);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));if(value!==undefined)n.textContent=value;scene.append(n);return n;}
+function line(a,b,stroke=C.grid,width=1.5,attrs={}){return el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke,'stroke-width':width,...attrs});}
+function label(x,y,text,cls='',anchor='start'){return el('text',{x,y,class:cls,'text-anchor':anchor},text);}
+function polygon(points,fill,opacity=.2,stroke=C.grid,width=1.5,attrs={}){return el('polygon',{points:points.map(p=>p.join(',')).join(' '),fill,'fill-opacity':opacity,stroke,'stroke-width':width,...attrs});}
+function valueColor(value){const stops=['#1B29AE','#245BF0','#0098BE','#00A57A','#67A51B','#F08A00','#E04E3A','#D53B8C','#8C4BE4'],f=Math.max(0,Math.min(1,value-1))*8,index=Math.min(7,Math.floor(f)),mix=f-index,a=stops[index].slice(1).match(/../g).map(x=>parseInt(x,16)),b=stops[index+1].slice(1).match(/../g).map(x=>parseInt(x,16));return 'rgb('+a.map((v,i)=>Math.round(v+(b[i]-v)*mix)).join(',')+')';}
+function sample(p,i,j=0,k=0){const nearest=Math.max(1,Math.min(N,Math.round(Number(slider.value)*N))),highlighted=order===1||i===nearest;return el('circle',{cx:p[0],cy:p[1],r:RADIUS,fill:valueColor(1+i/N),opacity:highlighted?1:.18,stroke:'white','stroke-width':.9,'data-sample':'true','data-highlighted':highlighted,'data-i':i,'data-j':j,'data-k':k,'data-g':1+i/N});}
+// Fixed projection: a points right, b towards the viewer (right/down), c up.
+// Active labels: m=3 -> (x3,x2,x1); m=2 -> (x2,x1); m=1 -> (x1).
+function P(a,b,c){return [110+74*(2.3*a+1.0*b),272+74*(1.0*b-2.9*c)];}
+// h is outer x1; v is x2. Three integrals face the section: x1 up, x2 right.
+// Two integrals use the orthographic top view: x2 right, x1 down.
+function Q(h,v){return order===3?[640+190*v,285-190*h]:[580+220*v,100+210*h];}
+function axes3(){const o=P(0,0,0),names={1:['x₁','',''],2:['x₂','x₁',''],3:['x₃','x₂','x₁']}[order],ends=[P(1.55,0,0),P(0,1.08,0),P(0,0,1.08)];for(let dim=0;dim<3;dim++){const active=Boolean(names[dim]);line(o,ends[dim],active?C.ink:C.grid,active?1.4:1,active?{'marker-end':'url(#arrow)'}:{});if(active){const [x,y]=ends[dim],offset=[[8,5],[-8,-8],[-9,18]][dim];el('text',{x:x+offset[0],y:y+offset[1],'text-anchor':dim===0?'start':'end',style:'paint-order:stroke;stroke:white;stroke-width:4px;stroke-linejoin:round','data-axis':dim,'data-coordinate':names[dim]},names[dim]);}}label(o[0]-10,o[1]+20,'O','','end');}
+function axes2(v,h){const o=Q(0,0),eh=Q(1.09,0),ev=Q(0,1.09);line(o,eh,C.muted,1.4,{'marker-end':'url(#arrow)'});line(o,ev,C.muted,1.4,{'marker-end':'url(#arrow)'});label(eh[0]+(order===3?-9:9),eh[1]+(order===3?-2:9),h,'',order===3?'end':'start');label(ev[0]+10,ev[1]+(order===3?-6:4),v);label(o[0]-8,o[1]+20,'0','','end');label(Q(1,0)[0]-12,Q(1,0)[1]+8,'x','muted','end');label(Q(0,1)[0]+8,Q(0,1)[1]+(order===3?-10:19),'x','muted');}
+function parentCube(){for(let a=0;a<=1;a++)for(let b=0;b<=1;b++){line(P(0,a,b),P(1,a,b),C.grid,1,{'stroke-dasharray':'4 5','data-cube-edge':'true'});line(P(a,0,b),P(a,1,b),C.grid,1,{'stroke-dasharray':'4 5','data-cube-edge':'true'});line(P(a,b,0),P(a,b,1),C.grid,1,{'stroke-dasharray':'4 5','data-cube-edge':'true'});}}
+function corners(points){for(const p of points)el('circle',{cx:p[0],cy:p[1],r:2.5,fill:C.gold});}
+function rightAngle(q){const d=.055;el('polyline',{points:[Q(1-d,q),Q(1-d,q+d),Q(1,q+d)].map(x=>x.join(',')).join(' '),fill:'none',stroke:C.gold,'stroke-width':1.4,'data-projected-right-angle':'true'});}
+function spatialRightAngle(v,a,b){const plus=(u,w)=>u.map((z,i)=>z+w[i]),va=plus(v,a.map(z=>z*.045)),vb=plus(v,b.map(z=>z*.045)),vab=plus(va,b.map(z=>z*.045));el('polyline',{points:[P(...va),P(...vab),P(...vb)].map(p=>p.join(',')).join(' '),fill:'none',stroke:C.ink,'stroke-width':1.5});}
+function draw(){
+ const q=Math.min(1,Math.max(0,Number(slider.value)));scene.replaceChildren();scene.dataset.t=q.toFixed(3);scene.dataset.order=String(order);document.getElementById('position-value').value='t = '+['','x₁','x₂','x₃'][order]+' = '+q.toFixed(3);
+ document.getElementById('svg-title').textContent=['','一次积分：固定 x₁ = t','二重积分：固定 x₂ = t 的俯视图','三重积分：固定 x₃ = t 的截面侧视图'][order];document.getElementById('svg-desc').textContent=['','固定唯一变量 x₁ = t，没有额外积分变量。','固定最内层 x₂ = t，右侧俯视图中 x₂ 向右、x₁ 向下，金色线段从 x₁ = t 延伸至 x。','固定最内层 x₃ = t，右侧正对截面，x₁ 向上、x₂ 向右；与左侧使用同一位置 t 同步显示三角形。'][order];for(const b of document.querySelectorAll('button[data-order]'))b.setAttribute('aria-pressed',String(Number(b.dataset.order)===order));
+ label(34,35,['','把一排贡献收集起来','有顺序的三角形区域','有顺序的四面体区域'][order],'title');label(548,35,['','固定 x₁ = t：这一位置的贡献','固定 x₂ = t：俯视正交图','固定 x₃ = t：截面侧视图'][order],'title');line([500,60],[500,384],'#e3e8e8',1);
+ if(order===3){
+  parentCube();axes3();const v=[P(0,0,0),P(0,0,1),P(0,1,1),P(1,1,1)];polygon([v[0],v[1],v[2]],C.blue,.045);polygon([v[1],v[2],v[3]],C.blue,.055);polygon([v[0],v[2],v[3]],C.blue,.045);
+  for(let k=1;k<=N;k++)for(let j=1;j<=k;j++)for(let i=1;i<=j;i++)sample(P(i/N,j/N,k/N),i,j,k);
+  for(let a=0;a<4;a++)for(let b=a+1;b<4;b++)line(v[a],v[b],C.grid,1.2);for(let a=0;a<3;a++)line(v[a],v[a+1],C.ink,2.1,{'data-stair-edge':a+1});spatialRightAngle([0,0,1],[0,0,-1],[0,1,0]);spatialRightAngle([0,1,1],[0,-1,0],[1,0,0]);
+  const section=[P(q,q,q),P(q,q,1),P(q,1,1)];polygon(section,C.gold,.25,C.gold,2.3,{'data-testid':'left-slice','data-t':q.toFixed(3)});corners(section);
+  label(34,364,'0 ≤ x₃ ≤ x₂ ≤ x₁ ≤ x','muted');label(34,386,'深色阶梯边分别平行于 x₁、x₂、x₃ 轴','muted');label(34,406,'x₂ 朝向读者；图中的直角经过投影','muted');
+  axes2('x₂','x₁');const tri=[Q(q,q),Q(1,q),Q(1,1)];polygon(tri,C.gold,.18,C.gold,2.3,{'data-testid':'right-slice','data-t':q.toFixed(3)});corners(tri);if(q<.93)rightAngle(q);line(Q(0,q),Q(q,q),C.grid,1,{'stroke-dasharray':'4 4'});line(Q(q,0),Q(q,q),C.grid,1,{'stroke-dasharray':'4 4'});label(Q(0,q)[0]+10,Q(0,q)[1]+16,'t','gold');label(Q(q,0)[0]-10,Q(q,0)[1]+5,'t','gold','end');if(q<.9){label((Q(q,q)[0]+Q(1,q)[0])/2+12,(Q(q,q)[1]+Q(1,q)[1])/2+5,'x − t','gold');label((Q(1,q)[0]+Q(1,1)[0])/2+14,(Q(1,q)[1]+Q(1,1)[1])/2-6,'x − t','gold');}label(740,364,'截面侧视图：t ≤ x₂ ≤ x₁ ≤ x','muted','middle');label(740,386,'正对截面：x₁ 向上、x₂ 向右；两侧同步变化','muted','middle');
+  document.getElementById('description').textContent='固定最内层 x₃ = t 后，剩下有顺序的 x₂、x₁。';document.getElementById('weight').textContent='截面面积 (x − t)² / 2 = '+((1-q)**2/2).toFixed(3);document.getElementById('formula').textContent='I³g(x) = ∫₀ˣ g(x₃) · (x − x₃)² / 2 dx₃。图中 t = x₃；相同的三维区域，按另一方向收集。';
+ }else if(order===2){
+  parentCube();axes3();polygon([P(0,0,1),P(0,1,1),P(1,1,1)],C.blue,.055);
+  for(let j=1;j<=N;j++)for(let i=1;i<=j;i++)sample(P(i/N,j/N,1),i,j,N);line(P(0,0,1),P(0,1,1),C.ink,2.1);line(P(0,1,1),P(1,1,1),C.ink,2.1);spatialRightAngle([0,1,1],[0,-1,0],[1,0,0]);line(P(q,q,1),P(q,1,1),C.gold,4,{'data-testid':'left-slice','data-t':q.toFixed(3)});corners([P(q,q,1),P(q,1,1)]);label(34,364,'0 ≤ x₂ ≤ x₁ ≤ x','muted');label(34,386,'未启用的竖直方向仅用于图形排布','muted');
+  axes2('x₂','x₁');polygon([Q(0,0),Q(1,0),Q(1,1)],C.blue,.055);line(Q(q,q),Q(1,q),C.gold,4,{'data-testid':'right-slice','data-t':q.toFixed(3)});corners([Q(q,q),Q(1,q)]);line(Q(0,q),Q(q,q),C.grid,1,{'stroke-dasharray':'4 4'});label(Q(0,q)[0],Q(0,q)[1]-12,'t','gold','middle');if(q<.92)label((Q(q,q)[0]+Q(1,q)[0])/2+18,(Q(q,q)[1]+Q(1,q)[1])/2+5,'x − t','gold');label(740,364,'固定 x₂ = t，x₁ 从 t 走到 x','muted','middle');label(740,386,'俯视图：x₂ 向右、x₁ 向下；长度按坐标计算','muted','middle');
+  document.getElementById('description').textContent='固定最内层 x₂ = t 后，剩下外层变量 x₁。';document.getElementById('weight').textContent='截面长度 x − t = '+(1-q).toFixed(2);document.getElementById('formula').textContent='I²g(x) = ∫₀ˣ g(x₂) · (x − x₂) dx₂。图中 t = x₂；每一排都按相同的间距采样。';
+ }else{
+  const y=230;parentCube();axes3();line(P(0,1,1),P(1,1,1),C.ink,2.1);for(let i=1;i<=N;i++)sample(P(i/N,1,1),i,N,N);const mark=P(q,1,1);line([mark[0],mark[1]-12],[mark[0],mark[1]+12],C.gold,2.2,{'data-testid':'left-slice','data-t':q.toFixed(3)});label(34,364,'0 ≤ x₁ ≤ x','muted');label(34,386,'未启用的两个方向仅用于图形排布','muted');
+  line([590,y],[900,y],C.muted,1.4);line([610+270*q,y-17],[610+270*q,y+17],C.gold,2.2,{'data-testid':'right-slice','data-t':q.toFixed(3)});label(610+270*q,198,'g(t)','gold','middle');label(605,258,'0');label(880,258,'x');label(740,324,'还没有额外的积分变量','muted','middle');document.getElementById('description').textContent='固定唯一变量 x₁ = t 后，没有额外变量；这一位置的贡献收集一次。';document.getElementById('weight').textContent='积分权重 = 1';document.getElementById('formula').textContent='Ig(x) = ∫₀ˣ g(x₁) dx₁。图中 t = x₁；一次积分的权重为 1。';
+ }
+ // Draw highlighted samples above translucent section faces and guide lines.
+ for(const dot of [...scene.querySelectorAll('[data-sample][data-highlighted="true"]')])scene.append(dot);
+}
+slider.addEventListener('input',draw);for(const b of document.querySelectorAll('button[data-order]'))b.addEventListener('click',()=>{order=Number(b.dataset.order);draw();});draw();
+</script></html>
