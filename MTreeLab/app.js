@@ -437,7 +437,7 @@ function renderMap({expanding=false}={}) {
   const svg=app.querySelector('.graph-svg'),camera=document.getElementById('graph-camera');
   svg.insertAdjacentHTML('afterbegin',relationDrawing.defs);
   const relationLegend=document.createElement('div');relationLegend.className='relation-legend';
-  relationLegend.innerHTML='<span><i class="legend-line prerequisite"></i>强依赖 / Prerequisite</span><span><i class="legend-line related"></i>相关节点 / Related</span><span><i class="legend-line contains"></i>主题包含 / Contains</span><small>箭头：先修 → 后续 · 悬停外圈：<b class="prerequisite-key">前置</b> / <b class="dependent-key">后续</b> / <b class="related-key">相关</b></small>';
+  relationLegend.innerHTML='<span><i class="legend-line prerequisite"></i>前置 → 后续 / Dependency</span><span><i class="legend-line related"></i>相关节点 / Related</span><span><i class="legend-line contains"></i>主题包含 / Contains</span><small>悬停外圈：<b class="prerequisite-key">前置</b> / <b class="related-key">相关</b> / <b class="dependent-key">后续</b></small>';
   app.querySelector('.map-legend .legend-line.contains')?.parentElement.remove();
   app.querySelector('.map-footer').after(relationLegend);
   const inspector=document.createElement('aside');inspector.id='graph-relation-inspector';inspector.className='relation-inspector';inspector.hidden=true;inspector.setAttribute('role','status');inspector.setAttribute('aria-live','polite');
@@ -583,7 +583,7 @@ function expandConceptGraph(direction,anchorId=null,automatic=false){
 }
 function bindConceptExploration(entry,snapshot,layout){
   const page=app.querySelector('.map-page'),camera=document.getElementById('graph-camera');
-  const directions={prerequisites:[snapshot.counts.requiredRemaining?'必要前置':'分支前置','Prerequisites'],dependents:['后续知识','Dependents'],related:['相关概念','Related']};
+  const directions={prerequisites:[snapshot.counts.requiredRemaining?'必要前置':'分支前置','Prerequisites'],related:['相关节点','Related'],dependents:['后续节点','Next concepts']};
   const frontier=snapshot.frontier;
   const candidates=direction=>[...new Set(frontier[direction].flatMap(item=>item.candidateIds))];
   const controls=document.createElement('div');controls.className='concept-explorer-heading';

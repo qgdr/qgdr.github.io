@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>光滑子：把附近的输入轻轻平均</title>
+  <style>
+    :root{color-scheme:light;--paper:#fffdfa;--ink:#253b3c;--muted:#78807c;--teal:#087f8c;--gold:#c87510;font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--paper);color:var(--ink)}
+    *{box-sizing:border-box}body{margin:0}main{max-width:940px;margin:auto;padding:24px 24px 16px}h1{margin:0;font-size:23px;font-weight:650;letter-spacing:.02em}p{margin:9px 0 0;font-size:14px;line-height:1.7;color:#64716d}.formula{color:var(--teal);font-family:"Cambria Math",Georgia,serif;white-space:nowrap}.intro{display:flex;align-items:baseline;justify-content:space-between;gap:20px}.diagram{margin:8px -10px 0}svg{display:block;width:100%;height:auto;overflow:visible;touch-action:pan-y}svg text{font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif}svg .math{font-family:"Cambria Math",Georgia,serif}svg .axis{stroke:#c9ceca;stroke-width:1}svg .tick{stroke:#c9ceca;stroke-width:1}svg .label{font-size:16px;font-weight:550}svg .note{font-size:12px;fill:#7e8782}svg .axis-label{font-size:14px;fill:#858d88}.controls{display:grid;grid-template-columns:100px 1fr 1fr;gap:28px;align-items:center;margin:4px 14px 0}button{height:42px;border:0;border-radius:24px;background:var(--teal);color:#fff;font:inherit;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:background .15s}button:hover{background:#086e79}button:focus-visible,input:focus-visible{outline:3px solid #e6b654;outline-offset:4px}.control-label{display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-size:13px;color:#53635e}.control-label output{font-family:"Cambria Math",Georgia,serif;font-size:14px;color:#79837e;font-variant-numeric:tabular-nums}input[type=range]{display:block;width:100%;height:21px;margin:8px 0 0;padding:0;accent-color:var(--teal);cursor:pointer}#epsilon{accent-color:var(--gold)}.condition{font-size:12px;line-height:1.8;color:#89908a;margin:19px 14px 0}.condition .math{font-family:"Cambria Math",Georgia,serif}.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}footer{font-size:11px;color:#a1a69e;margin:12px 14px 0}@media(max-width:650px){main{padding:18px 16px 14px}h1{font-size:20px}.intro{display:block}.intro p{font-size:13px}.diagram{margin:6px -8px 0}.controls{gap:14px;grid-template-columns:86px 1fr;margin:4px 0 0}.width-control{grid-column:2}.condition{margin:16px 0 0}footer{margin-left:0}.formula{font-size:15px}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="intro">
+    <div><h1>光滑子：把附近的输入轻轻平均</h1><p>移动金色窗口，看尖角变得平滑；缩窄窗口，看结果贴近原图。</p></div>
+    <p class="formula" aria-label="f epsilon 等于 f 与 rho epsilon 的卷积">f<sub>ε</sub> = f ∗ ρ<sub>ε</sub></p>
+  </div>
+
+  <div class="diagram">
+    <svg id="mollifier" viewbox="0 0 900 570" role="img" aria-labelledby="diagram-title diagram-description">
+      <title id="diagram-title">紧支撑光滑子与局部加权平均</title>
+      <desc id="diagram-description">三幅图共享横坐标。上图是有尖角的连续输入，中图是以 x 为中心、支撑宽度为两倍 epsilon、面积为一的光滑核；下图是完整卷积曲线。金色竖线和青色圆点随窗口位置同步移动。拖动宽度，核越窄越高，平滑结果越接近输入。</desc>
+      <defs>
+        <clippath id="plot-clip"><rect x="64" y="46" width="780" height="500"></clippath>
+        <clippath id="local-input-clip"><rect id="local-input-window" x="0" y="62" width="0" height="112"></clippath>
+      </defs>
+
+      <g clip-path="url(#plot-clip)">
+        <rect id="window-band" y="65" height="278" fill="#c87510" opacity=".055">
+        <path id="input-fill" fill="#58645c" opacity=".045">
+        <path id="local-input-fill" fill="#c87510" opacity=".14" clip-path="url(#local-input-clip)">
+        <path id="input-curve" fill="none" stroke="#56645d" stroke-width="2.3" stroke-linejoin="round">
+        <path id="local-input-curve" fill="none" stroke="#c87510" stroke-width="2.8" stroke-linejoin="round" clip-path="url(#local-input-clip)">
+        <path id="kernel-fill" fill="#c87510" opacity=".14">
+        <path id="kernel-curve" fill="none" stroke="#c87510" stroke-width="2.5" stroke-linejoin="round">
+        <path id="output-fill" fill="#087f8c" opacity=".055">
+        <path id="original-ghost" fill="none" stroke="#a5aca5" stroke-width="1.65" stroke-dasharray="5 5" stroke-linejoin="round">
+        <path id="output-curve" fill="none" stroke="#087f8c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+        <line id="position-guide" y1="65" y2="526" stroke="#c87510" stroke-width="1.2" stroke-dasharray="3 5" opacity=".55">
+        <circle id="input-point" r="3.5" fill="#fffdfa" stroke="#c87510" stroke-width="1.8">
+        <circle id="output-halo" r="10" fill="#087f8c" opacity=".1">
+        <circle id="output-point" r="5" fill="#087f8c" stroke="#fffdfa" stroke-width="2">
+      </g>
+
+      <text x="64" y="37" class="label" fill="#53635a">有尖角的输入 <tspan class="math">f(t)</tspan></text>
+      <line x1="64" y1="168" x2="844" y2="168" class="axis">
+      <text x="855" y="173" class="axis-label math">t</text>
+
+      <text x="64" y="203" class="label" fill="#b16b13">光滑的权重 <tspan class="math">ρ<tspan baseline-shift="sub" font-size="11">ε</tspan>(x − t)</tspan></text>
+      <text x="844" y="203" text-anchor="end" class="note">非负，面积始终为 1</text>
+      <line x1="64" y1="343" x2="844" y2="343" class="axis">
+      <text x="855" y="348" class="axis-label math">t</text>
+      <path id="support-bracket" fill="none" stroke="#c87510" stroke-width="1" opacity=".65">
+      <text id="support-label" y="375" text-anchor="middle" class="math" font-size="13" fill="#b47932">宽度 2ε</text>
+
+      <text x="64" y="416" class="label" fill="#087f8c">平均后的曲线 <tspan class="math">f<tspan baseline-shift="sub" font-size="11">ε</tspan>(x)</tspan></text>
+      <g transform="translate(695 412)"><line x1="0" y1="0" x2="24" y2="0" stroke="#a5aca5" stroke-width="1.6" stroke-dasharray="5 5"><text x="33" y="4" class="note">原来的 f</text></g>
+      <line x1="64" y1="526" x2="844" y2="526" class="axis">
+      <g id="x-ticks"></g>
+      <text x="855" y="531" class="axis-label math">x</text>
+      <text id="current-x-label" y="563" text-anchor="middle" class="math" font-size="15" fill="#b47932">x</text>
+    </svg>
+  </div>
+
+  <div class="controls" aria-label="动画控制">
+    <button id="play" type="button" aria-pressed="false"><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">播放</span></button>
+    <div>
+      <label for="position" class="control-label"><span>移动窗口</span><output id="position-value" for="position"></output></label>
+      <input id="position" type="range" min="-2.8" max="2.8" step="0.005" value="-0.7" aria-label="窗口中心 x">
+    </div>
+    <div class="width-control">
+      <label for="epsilon" class="control-label"><span>平滑宽度</span><output id="epsilon-value" for="epsilon"></output></label>
+      <input id="epsilon" type="range" min="0.22" max="1.0" step="0.005" value="0.65" aria-label="光滑子的宽度 epsilon">
+    </div>
+  </div>
+  <p class="condition"><span class="math">ρ(u) = C exp(−1/(1−u²))</span>（|u| &lt; 1），区间外为 0；<span class="math">ρ<sub>ε</sub>(t) = ρ(t/ε)/ε</span>。本例输入连续，故 ε → 0 时逼近原图；一般在 f 的连续点成立。紧支撑光滑核与任意局部可积 f 卷积，结果均为 C<sup>∞</sup>。</p>
+  <p id="animation-status" class="sr-only" aria-live="polite"></p>
+  <footer>© 2026 qgdr · MTreeLab 暂行非商业许可</footer>
+</main>
+<script src="/MTreeLab/assets/ra.convolution/figures/mollifier-interactive.js"></script>
+</body>
+</html>

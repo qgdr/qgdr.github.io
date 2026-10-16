@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const types = Object.freeze({
-    prerequisite: {title:'强依赖',english:'Prerequisite',rank:0,marker:'prerequisite'},
+    prerequisite: {title:'前置依赖',english:'Prerequisite',rank:0,marker:'prerequisite'},
     related: {title:'相关节点',english:'Related',rank:1},
     contains: {title:'主题包含',english:'Contains',rank:2,marker:'contains'},
     requires: {title:'习题需要',english:'Requires',rank:3,marker:'requires'}
@@ -90,7 +90,7 @@
       const nodes=relations[key];
       return `<div class="relation-inspector-row ${key}"><h3>${title}<span>${english} · ${nodes.length}</span></h3><p>${nodes.length?nodes.map(node=>`<button type="button" data-relation-node="${esc(node.id)}" title="${esc(node.english_title||'')}">${esc(node.title||node.id)}${node.outside?'<small>图外</small>':''}</button>`).join(''):'<span class="relation-none">暂无 / None</span>'}</p></div>`;
     };
-    return `<p class="relation-inspector-heading">${esc(relations.node?.title||'')}<small>${esc(relations.node?.english_title||'')}</small></p>${row('prerequisites','直接前置','Prerequisites')}${row('dependents','后续依赖','Dependents')}${row('related','相关节点','Related')}${relations.contains.length?row('contains','主题包含','Contains'):''}${relations.containedBy.length?row('containedBy','所属主题','Contained in'):''}<p class="relation-inspector-note">仅直接关系 · 图外表示当前图谱未显示</p>`;
+    return `<p class="relation-inspector-heading">${esc(relations.node?.title||'')}<small>${esc(relations.node?.english_title||'')}</small></p>${row('prerequisites','前置节点','Prerequisites')}${row('related','相关节点','Related')}${row('dependents','后续节点','Next concepts')}${relations.contains.length?row('contains','主题包含','Contains'):''}${relations.containedBy.length?row('containedBy','所属主题','Contained in'):''}<p class="relation-inspector-note">仅直接关系 · 箭头从前置指向后续 · 图外表示当前图谱未显示</p>`;
   }
   window.MTreeGraphRelations=Object.freeze({types,unique,render,direct,inspectorHTML});
 })();
