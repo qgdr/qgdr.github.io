@@ -21,41 +21,41 @@
       <title id="diagram-title">紧支撑光滑子与局部加权平均</title>
       <desc id="diagram-description">三幅图共享横坐标。上图是有尖角的连续输入，中图是以 x 为中心、支撑宽度为两倍 epsilon、面积为一的光滑核；下图是完整卷积曲线。金色竖线和青色圆点随窗口位置同步移动。拖动宽度，核越窄越高，平滑结果越接近输入。</desc>
       <defs>
-        <clippath id="plot-clip"><rect x="64" y="46" width="780" height="500"></clippath>
-        <clippath id="local-input-clip"><rect id="local-input-window" x="0" y="62" width="0" height="112"></clippath>
+        <clippath id="plot-clip"><rect x="64" y="46" width="780" height="500"/></clippath>
+        <clippath id="local-input-clip"><rect id="local-input-window" x="0" y="62" width="0" height="112"/></clippath>
       </defs>
 
       <g clip-path="url(#plot-clip)">
-        <rect id="window-band" y="65" height="278" fill="#c87510" opacity=".055">
-        <path id="input-fill" fill="#58645c" opacity=".045">
-        <path id="local-input-fill" fill="#c87510" opacity=".14" clip-path="url(#local-input-clip)">
-        <path id="input-curve" fill="none" stroke="#56645d" stroke-width="2.3" stroke-linejoin="round">
-        <path id="local-input-curve" fill="none" stroke="#c87510" stroke-width="2.8" stroke-linejoin="round" clip-path="url(#local-input-clip)">
-        <path id="kernel-fill" fill="#c87510" opacity=".14">
-        <path id="kernel-curve" fill="none" stroke="#c87510" stroke-width="2.5" stroke-linejoin="round">
-        <path id="output-fill" fill="#087f8c" opacity=".055">
-        <path id="original-ghost" fill="none" stroke="#a5aca5" stroke-width="1.65" stroke-dasharray="5 5" stroke-linejoin="round">
-        <path id="output-curve" fill="none" stroke="#087f8c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-        <line id="position-guide" y1="65" y2="526" stroke="#c87510" stroke-width="1.2" stroke-dasharray="3 5" opacity=".55">
-        <circle id="input-point" r="3.5" fill="#fffdfa" stroke="#c87510" stroke-width="1.8">
-        <circle id="output-halo" r="10" fill="#087f8c" opacity=".1">
-        <circle id="output-point" r="5" fill="#087f8c" stroke="#fffdfa" stroke-width="2">
+        <rect id="window-band" y="65" height="278" fill="#c87510" opacity=".055"/>
+        <path id="input-fill" fill="#58645c" opacity=".045"/>
+        <path id="local-input-fill" fill="#c87510" opacity=".14" clip-path="url(#local-input-clip)"/>
+        <path id="input-curve" fill="none" stroke="#56645d" stroke-width="2.3" stroke-linejoin="round"/>
+        <path id="local-input-curve" fill="none" stroke="#c87510" stroke-width="2.8" stroke-linejoin="round" clip-path="url(#local-input-clip)"/>
+        <path id="kernel-fill" fill="#c87510" opacity=".14"/>
+        <path id="kernel-curve" fill="none" stroke="#c87510" stroke-width="2.5" stroke-linejoin="round"/>
+        <path id="output-fill" fill="#087f8c" opacity=".055"/>
+        <path id="original-ghost" fill="none" stroke="#a5aca5" stroke-width="1.65" stroke-dasharray="5 5" stroke-linejoin="round"/>
+        <path id="output-curve" fill="none" stroke="#087f8c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+        <line id="position-guide" y1="65" y2="526" stroke="#c87510" stroke-width="1.2" stroke-dasharray="3 5" opacity=".55"/>
+        <circle id="input-point" r="3.5" fill="#fffdfa" stroke="#c87510" stroke-width="1.8"/>
+        <circle id="output-halo" r="10" fill="#087f8c" opacity=".1"/>
+        <circle id="output-point" r="5" fill="#087f8c" stroke="#fffdfa" stroke-width="2"/>
       </g>
 
       <text x="64" y="37" class="label" fill="#53635a">有尖角的输入 <tspan class="math">f(t)</tspan></text>
-      <line x1="64" y1="168" x2="844" y2="168" class="axis">
+      <line x1="64" y1="168" x2="844" y2="168" class="axis"/>
       <text x="855" y="173" class="axis-label math">t</text>
 
       <text x="64" y="203" class="label" fill="#b16b13">光滑的权重 <tspan class="math">ρ<tspan baseline-shift="sub" font-size="11">ε</tspan>(x − t)</tspan></text>
       <text x="844" y="203" text-anchor="end" class="note">非负，面积始终为 1</text>
-      <line x1="64" y1="343" x2="844" y2="343" class="axis">
+      <line x1="64" y1="343" x2="844" y2="343" class="axis"/>
       <text x="855" y="348" class="axis-label math">t</text>
-      <path id="support-bracket" fill="none" stroke="#c87510" stroke-width="1" opacity=".65">
+      <path id="support-bracket" fill="none" stroke="#c87510" stroke-width="1" opacity=".65"/>
       <text id="support-label" y="375" text-anchor="middle" class="math" font-size="13" fill="#b47932">宽度 2ε</text>
 
       <text x="64" y="416" class="label" fill="#087f8c">平均后的曲线 <tspan class="math">f<tspan baseline-shift="sub" font-size="11">ε</tspan>(x)</tspan></text>
-      <g transform="translate(695 412)"><line x1="0" y1="0" x2="24" y2="0" stroke="#a5aca5" stroke-width="1.6" stroke-dasharray="5 5"><text x="33" y="4" class="note">原来的 f</text></g>
-      <line x1="64" y1="526" x2="844" y2="526" class="axis">
+      <g transform="translate(695 412)"><line x1="0" y1="0" x2="24" y2="0" stroke="#a5aca5" stroke-width="1.6" stroke-dasharray="5 5"/><text x="33" y="4" class="note">原来的 f</text></g>
+      <line x1="64" y1="526" x2="844" y2="526" class="axis"/>
       <g id="x-ticks"></g>
       <text x="855" y="531" class="axis-label math">x</text>
       <text id="current-x-label" y="563" text-anchor="middle" class="math" font-size="15" fill="#b47932">x</text>
