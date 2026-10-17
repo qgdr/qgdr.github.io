@@ -1,7 +1,7 @@
 /* Add a small set of concepts without moving the learner's existing landmarks. */
 (() => {
   'use strict';
-  const spacing=.8,GAP=205*spacing;
+  const spacing=.8,GAP=205*spacing,UPSTREAM_GAP=Math.max(GAP,76+102+12);
   const noise=(id,salt=0)=>{
     let value=2166136261;
     for(const char of `${id}:${salt}`){value^=char.codePointAt(0);value=Math.imul(value,16777619);}
@@ -64,7 +64,10 @@
       }else lower.set(id,floor);
     });
     [...order].reverse().forEach(id=>{
-      const ceiling=Math.min(Infinity,...[...children.get(id)].map(child=>upper.get(child)-GAP));
+      // Reserve the full label clearance for unseen ancestors. A deep chain
+      // placed from its earliest node must not consume the space by a fixed child.
+      const gap=oldSet.has(id)?GAP:UPSTREAM_GAP;
+      const ceiling=Math.min(Infinity,...[...children.get(id)].map(child=>upper.get(child)-gap));
       if(oldSet.has(id)){
         if(points.get(id).y>ceiling+.01)conflict=true;
         upper.set(id,points.get(id).y);
