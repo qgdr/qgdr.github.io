@@ -1,0 +1,36 @@
+/* Author approval belongs to article versions, independently of learning progress. */
+:root {
+  --unreviewed-fill: #e6e8e8;
+  --unreviewed-line: #a6adaf;
+  --unreviewed-ink: #5d6569;
+  --unreviewed-muted: #737b80;
+}
+html[data-theme="dark"] {
+  --unreviewed-fill: #2c3034;
+  --unreviewed-line: #62686f;
+  --unreviewed-ink: #c0c4c8;
+  --unreviewed-muted: #a0a6ad;
+}
+
+/* Keep the disc gray through read/understood, focus and hover states in both themes.
+   The outer relation halos continue to identify prerequisites and dependents. */
+#app .graph-node.author-unreviewed circle.node-disc {
+  fill: var(--unreviewed-fill);
+  stroke: var(--unreviewed-line);
+}
+#app .graph-node.author-unreviewed text { fill: var(--unreviewed-ink); }
+#app .graph-node.author-unreviewed text.node-english { fill: var(--unreviewed-muted); }
+#app .map-legend .legend-disc.author-unreviewed {
+  background: var(--unreviewed-fill);
+  border-color: var(--unreviewed-line);
+}
+#app .map-directory-list button.author-unreviewed,
+#app .exercise-connections .requirement-node.author-unreviewed,
+#app .exercise-connections .requirement-target.author-unreviewed > span {
+  background: var(--unreviewed-fill);
+  border-color: var(--unreviewed-line);
+  color: var(--unreviewed-ink);
+}
+#app .exercise-connections .requirement-node.author-unreviewed em {
+  color: var(--unreviewed-muted);
+}
