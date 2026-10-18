@@ -667,6 +667,11 @@ function isEmptyLesson(lesson) {
   return lesson.placeholder || lesson.content_status === 'placeholder' || lesson.content_state === 'empty' || /内容筹备中|Content coming soon/i.test(lesson.markdown || '') && (lesson.markdown || '').length < 1500;
 }
 function assetURL(lesson, resource) { return resource.preview_url || resource.asset_url || `/assets/${encodeURIComponent(lesson.id)}/${encodeURIComponent(resource.id)}`; }
+function reusableResources(lesson) {
+  // Article resources control what is displayed; the node pool serves explicit
+  // cross-node references, including resources omitted from its default article.
+  return Array.isArray(lesson.shared_resources) ? lesson.shared_resources : (lesson.resources || []);
+}
 function renderMath(container) {
   if (!window.katex) return;
   container.querySelectorAll('.math').forEach(element=>{
@@ -834,7 +839,7 @@ function authorSourceLink(link,lesson) {
   const path=localResourcePath(href);
   const sourceExtension=/\.(?:md|markdown|typ|tex|ipynb|py|jl|m|rst|toml|json|ya?ml|txt|sh|ps1|bat|csv)$/i;
   if(path&&/^\/(?:sources|assets)\//.test(path)&&sourceExtension.test(path))return true;
-  const resource=(lesson.resources||[]).find(item=>matchesResource(href,lesson,item));
+  const resource=reusableResources(lesson).find(item=>matchesResource(href,lesson,item));
   if(resource&&(resource.type==='notebook'||resource.type==='typst'&&resource.render_state!=='built'))return true;
   return /原始源稿|相关源文件|分段源码|Original source|Related source|Constituent source/i.test(link.textContent);
 }
@@ -857,7 +862,7 @@ async function embedCrossNodeMedia(lesson,content,used) {
       if(!content.isConnected||state.lesson?.id!==lesson.id)return;
       links.forEach(({link,id})=>{
         if(!link.isConnected)return;
-        const resource=(linkedLesson.resources||[]).find(item=>item.id===id);
+        const resource=reusableResources(linkedLesson).find(item=>item.id===id);
         if(!resource)return;
         if(authorSourceLink(link,linkedLesson)){replaceResourceLink(link);return;}
         if(!['html','video','manim'].includes(resource.type))return;
