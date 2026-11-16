@@ -34,8 +34,8 @@
     if (/^(?:证明|推导与证明|推导或证明|命题证明|Proof\b)/i.test(title)) return 'proof';
     if (/^(?:定义|一般定义|补充定义|Definition\b|Definitions\b|Defination\b|Definations\b)/i.test(title)
         || /的定义(?:与|及|[（(/·]|$)/.test(title)) return 'definition';
-    if (/^(?:定理|Theorem\b)/i.test(title) || /(?:\bTheorem\b|定理)(?:\s|[\d（(/·]|$)/i.test(title)) return 'theorem';
-    if (/^(?:引理|Lemma\b)/i.test(title) || /(?:\bLemma\b|引理)(?:\s|[\d（(/·]|$)/i.test(title)) return 'lemma';
+    if (/^(?:定理(?=\s|[\d（(/·:：。]|$)|Theorem\b)/i.test(title) || /(?:\bTheorem\b|定理)(?:\s|[\d（(/·]|$)/i.test(title)) return 'theorem';
+    if (/^(?:引理(?=\s|[\d（(/·:：。]|$)|Lemma\b)/i.test(title) || /(?:\bLemma\b|引理)(?:\s|[\d（(/·]|$)/i.test(title)) return 'lemma';
     if (/^(?:命题|Proposition\b)/i.test(title)) return 'proposition';
     if (/^(?:推论|Corollary\b)/i.test(title)) return 'corollary';
     if (/^(?:例子|例题|示例|一个.*例子|Example\b|Examples\b)/i.test(title)) return 'example';
@@ -121,7 +121,18 @@
       if (element.closest('.math-environment')) return;
       const first = element.firstElementChild;
       const typed = first && marker(first);
-      if (typed) decorate(element, typed.kind, first);
+      if (typed) {
+        let title = first;
+        if (first.tagName === 'P' && !typed.block) {
+          // Markdown may put a bold theorem label and its body in one
+          // paragraph. Style only the label as the title, not every word
+          // through the first display equation.
+          title = document.createElement('p');
+          first.before(title);
+          title.append(first.firstElementChild);
+        }
+        decorate(element, typed.kind, title);
+      }
     });
     // Legacy headings and bold labels can be upgraded without rewriting their
     // text, formula nodes, IDs, link attributes or document order.

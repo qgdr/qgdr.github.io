@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="490" viewBox="0 0 760 490" role="img" aria-labelledby="title desc">
+  <title id="title">从线性延拓到凸集分离的证明路线</title>
+  <desc id="desc">次线性约束下的一维延拓与Zorn引理给出解析形式；开凸集构造Gauge。两者共同给出点与开凸集的分离，再通过差集得到第一几何形式，最后用闭性与紧性得到统一正间隔。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#6c8586"/></marker></defs>
+  <rect width="760" height="490" rx="22" fill="#f8f6ef"/>
+  <g fill="none" stroke="#6c8586" stroke-width="2" marker-end="url(#arrow)">
+    <path d="M200 113V142Q200 157 220 157H350Q380 157 380 177"/>
+    <path d="M560 113V142Q560 157 540 157H410Q380 157 380 177"/>
+    <path d="M380 248V280"/><path d="M380 352V385"/>
+  </g>
+  <g font-family="Microsoft YaHei,Segoe UI,sans-serif" text-anchor="middle">
+    <rect x="55" y="26" width="290" height="87" rx="15" fill="#e6efec" stroke="#73a495"/>
+    <text x="200" y="55" font-size="18" fill="#204b44">定理 1.1 · 解析形式</text>
+    <text x="200" y="82" font-size="14" fill="#46625d">一维延拓 ＋ Zorn 引理</text>
+    <rect x="415" y="26" width="290" height="87" rx="15" fill="#e8edf5" stroke="#8aa2c6"/>
+    <text x="560" y="55" font-size="18" fill="#2b4b76">引理 1.2 · Gauge</text>
+    <text x="560" y="82" font-size="14" fill="#516782">开凸集 → 次线性上界</text>
+    <rect x="185" y="177" width="390" height="71" rx="15" fill="#f5eadd" stroke="#bb996a"/>
+    <text x="380" y="207" font-size="18" fill="#76572e">引理 1.3 · 点与开凸集的分离</text>
+    <text x="380" y="230" font-size="14" fill="#7d6b52">先规定一个方向，再延拓泛函</text>
+    <rect x="185" y="280" width="390" height="72" rx="15" fill="#e6efec" stroke="#73a495"/>
+    <text x="380" y="310" font-size="18" fill="#204b44">定理 1.6 · 第一几何形式</text>
+    <text x="380" y="335" font-size="14" fill="#46625d">C = A − B；分离 C 与 0</text>
+    <rect x="185" y="385" width="390" height="72" rx="15" fill="#e8edf5" stroke="#8aa2c6"/>
+    <text x="380" y="415" font-size="18" fill="#2b4b76">定理 1.7 · 第二几何形式</text>
+    <text x="380" y="440" font-size="14" fill="#516782">闭集 ＋ 紧集 → 统一正间隔</text>
+  </g>
+</svg>

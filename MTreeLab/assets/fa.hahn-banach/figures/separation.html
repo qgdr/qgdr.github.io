@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>从差集看凸集分离 · Separation of convex sets</title>
+  <link rel="stylesheet" href="/MTreeLab/assets/fa.hahn-banach/figures/separation.css">
+</head>
+<body>
+<main class="separation-figure">
+  <header>
+    <div><p class="eyebrow">A − B · SEPARATION</p><h1>把两个集合的分离，化成差集与原点的分离</h1></div>
+    <div class="mode" role="group" aria-label="选择分离情形">
+      <button type="button" data-mode="ordinary" aria-pressed="true">一个集合开</button>
+      <button type="button" data-mode="strict" aria-pressed="false">闭集与紧集</button>
+    </div>
+  </header>
+  <nav class="steps" aria-label="逐步观察">
+    <button type="button" data-step="1" aria-current="step">1　两个集合</button>
+    <button type="button" data-step="2">2　作差</button>
+    <button type="button" data-step="3">3　投影</button>
+    <button type="button" data-step="4">4　放回分离线</button>
+  </nav>
+  <div class="formula" aria-live="polite"><span><i>f</i>(x₁, x₂) = x₁</span><strong><i>f</i>(a − b) = <i>f</i>(a) − <i>f</i>(b) &lt; 0</strong></div>
+  <div class="controls">
+    <label>集合间距 δ <input id="gap" type="range" min="0" max="2" step="0.05" value="0"><output id="gap-value" for="gap">0</output></label>
+    <label>选点 a <input id="theta-a" type="range" min="-160" max="160" step="1" value="-32"></label>
+    <label>选点 b <input id="theta-b" type="range" min="20" max="340" step="1" value="146"></label>
+  </div>
+  <div class="panels">
+    <section class="panel"><h2><span class="color-a">A</span> 与 <span class="color-b">B</span><small id="set-types">A 开圆盘，B 闭圆盘</small></h2><svg id="original" viewbox="0 0 500 278" role="img" aria-label="两个凸集、选点及其线性泛函投影"></svg></section>
+    <section class="panel"><h2>差集 <span class="color-c">C = A − B</span><small id="difference-type">把所有 a − b 收集起来</small></h2><svg id="difference" viewbox="0 0 500 278" role="img" aria-label="差集与原点的分离，以及差集的线性泛函投影"></svg></section>
+  </div>
+  <div class="explanation"><p id="stage-note"></p><p id="gap-note" aria-live="polite"></p></div>
+  <p class="example-note">二维例子：圆盘半径为 1，圆心分别为 (−d, 0)、(d, 0)，d = 1 + δ/2。选点始终位于圆盘内部。虚线边界不属于开集，实线边界属于闭集。</p>
+</main>
+<script src="/MTreeLab/assets/fa.hahn-banach/figures/separation.js"></script>
+</body>
+</html>

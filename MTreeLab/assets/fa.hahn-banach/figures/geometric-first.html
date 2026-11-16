@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>第一几何形式：先造出 f，再平移分离线</title>
+  <link rel="stylesheet" href="/MTreeLab/assets/fa.hahn-banach/figures/geometric-first.css">
+</head>
+<body>
+<main id="first-geometric">
+  <header><div><p class="eyebrow">HAHN–BANACH · FIRST GEOMETRIC FORM</p><h1>先造出 <i>f</i>，再把分离线移到两个集合之间</h1></div><label class="touching-control"><input id="touching" type="checkbox"> 看边界接触的情形</label></header>
+  <nav class="steps" aria-label="第一几何形式的六步构造">
+    <button data-step="1" aria-current="step">1　作差</button><button data-step="2">2　构造 Gauge</button><button data-step="3">3　延拓得到 f</button><button data-step="4">4　移回 C</button><button data-step="5">5　看 f(A)、f(B)</button><button data-step="6">6　平移分离线</button>
+  </nav>
+  <div class="formula" id="formula" aria-live="polite"></div>
+  <div class="playback"><button id="play" type="button">播放本步</button><label for="progress">本步过程</label><input id="progress" type="range" min="0" max="1" step="0.005" value="1"><button id="next" type="button">下一步 →</button></div>
+  <label class="alpha-control" id="alpha-control" hidden>在两段取值之间选择 α <input id="alpha-choice" type="range" min="0" max="1" step="0.005" value="0.5"><span id="alpha-note">方向不变，只改变分隔值</span></label>
+  <div class="diagram-row" id="diagram-row">
+    <section class="diagram planar-host"><h2 id="planar-title"></h2><svg id="plane" viewbox="0 0 900 460" role="img" aria-label="凸集、线性泛函与平行的分离线"></svg></section>
+    <section class="diagram surface-host" hidden><h2 id="surface-title">Minkowski 泛函与线性延拓</h2><div class="surface-tools"><button id="reset-view" type="button">复位视角</button><span>拖动三维图可旋转</span></div><canvas id="surface" tabindex="0" aria-label="Minkowski 泛函的曲面、g 的直线与 f 的延拓平面"></canvas></section>
+  </div>
+  <p class="explanation" id="explanation" aria-live="polite"></p>
+  <p class="note" id="note"></p>
+</main>
+<script src="/MTreeLab/assets/fa.hahn-banach/figures/geometric-first.js"></script>
+</body>
+</html>

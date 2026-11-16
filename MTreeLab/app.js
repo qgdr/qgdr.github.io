@@ -804,6 +804,14 @@ function videoFigure(lesson,resource) {
   video.addEventListener('error',()=>{text.textContent='视频暂不可用，请确认附件路径。Video unavailable.';});
   return figure;
 }
+// Sandboxed figures may report their content height. Accept only a message
+// from a currently mounted figure, and bound its effect to that frame's size.
+window.addEventListener('message',event=>{
+  const data=event.data;
+  if(!data||data.type!=='mtree:figure-height'||typeof data.height!=='number'||!Number.isFinite(data.height))return;
+  const frame=[...document.querySelectorAll('iframe.interactive-viewer')].find(item=>item.contentWindow===event.source);
+  if(frame)frame.style.height=`${Math.min(1800,Math.max(240,Math.ceil(data.height)))}px`;
+});
 function interactiveFigure(lesson,resource) {
   const figure=document.createElement('figure');figure.className='lesson-media interactive-figure';
   const frame=document.createElement('iframe');frame.className='interactive-viewer';
